@@ -1,0 +1,13 @@
+# Pruebas Integrante 1
+- [x] Login correcto/incorrecto: flujo implementado.
+- [x] Persistencia del token.
+- [x] Protección sin token.
+- [x] Logout.
+- [x] Cinco operaciones de candidatos.
+- [x] Cuatro operaciones de entrevistas.
+- [x] Cuatro operaciones de tareas.
+- [x] Validación de formularios.
+- [x] Manejo de errores de red.
+- [x] Estado local tras mutaciones.
+- [x] Vista responsive.
+- [x] Solicitudes de integración: ninguna pendiente conocida.

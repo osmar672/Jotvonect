@@ -1,0 +1,1 @@
+export const confirmDelete = (feedback, message) => feedback.confirmDelete(message);
