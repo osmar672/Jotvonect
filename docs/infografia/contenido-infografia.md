@@ -1,11 +1,13 @@
-# Contenido para infografía
-- Arquitectura: UI → shell/app → módulos → servicios → DummyJSON.
-- Login: credenciales → `/auth/login` → accessToken/token → localStorage.
-- Seis módulos: Candidatos, Vacantes, Empresas clientes, Postulaciones, Entrevistas y notas, Tareas.
-- HTTP: GET, POST, PUT, PATCH, DELETE según módulo.
-- Navegación: login → panel → módulo → CRUD → feedback.
-- Feedback: carga, éxito, error y confirmación de DELETE.
-- Estado local: DummyJSON simula mutaciones; la interfaz actualiza su arreglo local.
-- Integrante 1: auth + 3 módulos + documentación.
-- Integrante 2: UI + servicios + 3 módulos + integración.
-- Archivo gráfico final: ________________________________.
+# Infografía final de JobConnect
+
+La infografía terminada se encuentra en:
+
+- `JobConnect_Infografia.pdf`
+
+Resume la arquitectura, Inicio corporativo, autenticación, navegación desplegable, perfiles configurables, seis módulos, métodos HTTP, estado local y pruebas automáticas. El archivo puede regenerarse con:
+
+```bash
+python3 scripts/create-infographic.py
+```
+
+Para la entrega se recomienda adjuntar el PDF directamente y también incorporarlo como fuente del proyecto en NotebookLM.

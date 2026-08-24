@@ -1,6 +1,6 @@
 # Prompt del Integrante 2 — Equipo de dos
 
-## Interfaz, servicios comunes, integración, vacantes, empresas, postulaciones, repositorio, README, video y bitácora
+## Interfaz, perfil configurable, servicios comunes, integración, vacantes, empresas, postulaciones, repositorio, README, video y bitácora
 
 Usar después de que el Prompt 0 esté fusionado con main. La integración final de los seis módulos se completa cuando el Pull Request del Integrante 1 ya esté en main.
 
@@ -11,6 +11,8 @@ Usar después de que el Prompt 0 esté fusionado con main. La integración final
 Actúa como desarrollador e integrador de JobConnect. Implementa de principio a fin:
 
 - Interfaz principal y navegación.
+- Inicio corporativo con animaciones interactivas.
+- Perfil configurable por tipo de cuenta.
 - Diseño responsivo.
 - Cliente API.
 - Feedback y errores.
@@ -44,6 +46,9 @@ Solo puedes crear o modificar:
 - src/js/config/**
 - src/js/core/**
 - src/js/ui/**
+- src/js/profile/**
+- src/js/animations/**
+- src/js/modules/home/**
 - src/js/modules/vacancies/**
 - src/js/modules/companies/**
 - src/js/modules/applications/**
@@ -51,6 +56,8 @@ Solo puedes crear o modificar:
 - src/css/layout.css
 - src/css/responsive.css
 - src/css/components/feedback.css
+- src/css/components/profile-panel.css
+- src/css/modules/home.css
 - src/css/modules/vacancies.css
 - src/css/modules/companies.css
 - src/css/modules/applications.css
@@ -86,23 +93,25 @@ Incluir los estilos en este orden:
 1. src/css/base.css
 2. src/css/layout.css
 3. src/css/components/feedback.css
-4. src/css/modules/candidates.css
-5. src/css/modules/interviews.css
-6. src/css/modules/tasks.css
-7. src/css/modules/vacancies.css
-8. src/css/modules/companies.css
-9. src/css/modules/applications.css
-10. src/css/responsive.css
+4. src/css/components/profile-panel.css
+5. src/css/modules/home.css
+6. src/css/modules/candidates.css
+7. src/css/modules/interviews.css
+8. src/css/modules/tasks.css
+9. src/css/modules/vacancies.css
+10. src/css/modules/companies.css
+11. src/css/modules/applications.css
+12. src/css/responsive.css
 
 Puedes enlazar los CSS del Integrante 1, pero no modificarlos.
 
 La interfaz debe incluir:
 
 - Encabezado JobConnect.
-- Menú para seis módulos.
+- Botón Menú que abre un panel para Inicio y seis módulos.
 - Área principal.
-- Usuario actual.
-- Logout.
+- Botón del usuario actual que abre su perfil.
+- Logout únicamente dentro del perfil.
 - Navegación por teclado.
 - Vista en computadora, tablet y teléfono.
 
@@ -114,17 +123,52 @@ Crear src/js/ui/shell.js y exportar exactamente:
       root,
       modules,
       onSelect,
-      onLogout
+      onLogout,
+      profileService,
+      onProfileSaved
     }) {}
 
 Debe:
 
 - Recibir la lista de módulos.
-- Crear navegación sin importar módulos CRUD.
+- Crear navegación en un panel bajo demanda sin importar módulos CRUD.
 - Ejecutar onSelect(id).
 - Ejecutar onLogout().
-- Devolver { contentContainer }.
+- Abrir el perfil desde el botón del usuario.
+- Cerrar ambos paneles con botón, fondo o Escape y controlar el foco.
+- Devolver { contentContainer, setActive, setUser, closeMenu, destroy }.
 - No implementar autenticación ni peticiones.
+
+### Perfil configurable
+
+Crear `src/js/profile/profile-service.js`, `src/js/ui/profile-panel.js` y `src/css/components/profile-panel.css`.
+
+El perfil debe guardar por cuenta en `localStorage`:
+
+- Tipo de cuenta: persona que busca trabajo, reclutador o empresa.
+- Nombre completo, correo, país y provincia o estado.
+- Para candidatos: empleo deseado, modalidad, diplomas, habilidades técnicas, habilidades blandas, distancia máxima y disponibilidad para trasladarse.
+- Para reclutadores: organización, cargo, cobertura y áreas de reclutamiento.
+- Para empresas: nombre, sector, descripción, vacantes y trabajo remoto.
+
+Debe escapar los datos al generar HTML, normalizar listas y distancia, actualizar el nombre del encabezado al guardar y mantener el cierre de sesión dentro del panel.
+
+### Inicio corporativo animado
+
+Crear `src/js/modules/home/index.js`, `src/js/animations/home-motion.js` y `src/css/modules/home.css`.
+
+- Comunicar la identidad de JobConnect, estándares y proceso de solución.
+- Usar GSAP y ScrollTrigger para entrada y movimiento sincronizado con el scroll.
+- Usar Anime.js para las figuras geométricas y Lenis para desplazamiento suave.
+- Incorporar reacción al puntero, botones magnéticos, texto cinético, portal y órbitas.
+- Presentar los estándares en un explorador interactivo accesible; no usar franjas de métricas ni cintas tipográficas.
+- Respetar `prefers-reduced-motion` y mostrar el estado del movimiento.
+- Mantener todo el contenido utilizable si falla una biblioteca.
+- Coordinar transiciones entre módulos y apertura escalonada de paneles.
+- Incorporar tema claro/oscuro persistente sin perder contraste ni foco visible.
+- Convertir el proceso de trabajo en una narrativa interactiva controlada por scroll.
+- Mejorar todos los CRUD desde el controlador compartido con skeletons, indicadores, ordenamiento, tarjetas/lista y editor lateral.
+- Mostrar porcentaje completado y vista previa profesional dinámica dentro del perfil.
 
 ## 3. CSS global
 
@@ -350,14 +394,16 @@ Después de fusionar el Pull Request del Integrante 1:
 2. Importa createApiClient.
 3. Crea feedback.
 4. Importa renderShell.
-5. Importa los seis módulos.
-6. Ejecuta requireAuth.
-7. Crea un único arreglo de módulos.
-8. Pasa el mismo objeto services a cada módulo.
-9. Desmonta el módulo anterior.
-10. Monta el seleccionado en contentContainer.
-11. Conecta logout.
-12. Controla errores de montaje.
+5. Importa createProfileService.
+6. Importa Inicio y los seis módulos.
+7. Ejecuta requireAuth.
+8. Crea un único arreglo de módulos.
+9. Crea el perfil con el usuario autenticado.
+10. Pasa el mismo objeto services a cada módulo.
+11. Desmonta el módulo anterior.
+12. Monta el seleccionado en contentContainer.
+13. Conecta guardado de perfil y logout.
+14. Controla errores de montaje.
 
 Orden:
 
@@ -389,6 +435,7 @@ Crear README.md con:
 - Autenticación.
 - Seis módulos y métodos.
 - Estado local.
+- Navegación desplegable y perfil por tipo de cuenta.
 - División entre dos integrantes.
 - Ramas y Pull Requests.
 - Uso.
@@ -406,6 +453,8 @@ Guion para:
 - Presentación.
 - Login.
 - Navegación.
+- Edición y persistencia del perfil.
+- Animaciones de Inicio, puntero, scroll y movimiento reducido.
 - Seis módulos.
 - CRUDs.
 - Feedback.
@@ -442,6 +491,9 @@ Crear docs/notebooklm/integrante-2/consultas.md sobre:
 
 - Arquitectura.
 - Navegación.
+- Panel de menú con Inicio y seis módulos.
+- Perfil de candidato, reclutador y empresa.
+- Movilidad, habilidades y persistencia por cuenta.
 - Responsividad.
 - Errores.
 - CORS.
@@ -497,6 +549,8 @@ Crear docs/integracion/reporte-final.md con:
 ## 18. Commits sugeridos
 
     feat(ui): crear panel y navegacion responsiva
+    feat(profile): agregar perfiles configurables por cuenta
+    feat(home): agregar experiencia interactiva inspirada en Lusion
     feat(core): implementar api, feedback y errores
     feat(vacancies): completar CRUD de vacantes
     feat(companies): completar CRUD de empresas
@@ -516,4 +570,3 @@ Entrega:
 - Confirmación de que no modificaste archivos del Integrante 1.
 
 No fusiones directamente a main. Deja la rama lista para Pull Request.
-

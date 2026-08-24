@@ -1,57 +1,55 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Inicio de sesión de JobConnect">
   <title>JobConnect | Iniciar sesión</title>
   <link rel="stylesheet" href="src/css/base.css">
   <link rel="stylesheet" href="src/css/auth.css">
 </head>
 <body class="auth-page">
-  <main id="login-root" class="auth-page__main">
-    <section class="auth-card" aria-labelledby="login-title">
-      <div class="auth-card__brand">
-        <span class="auth-card__mark" aria-hidden="true">J</span>
-        <div>
-          <strong>JobConnect</strong>
-          <span>Gestión de empleabilidad</span>
-        </div>
+  <div class="auth-layout">
+    <section class="auth-intro" aria-labelledby="auth-intro-title">
+      <div class="auth-intro__brand"><span aria-hidden="true">JC</span><strong>JobConnect</strong></div>
+      <p class="auth-intro__kicker">TECNOLOGÍA + TALENTO</p>
+      <h1 id="auth-intro-title">Talento.<br><em>Oportunidad.</em><br>Conexión.</h1>
+      <p class="auth-intro__copy">Una experiencia digital para hacer más claro, rápido y humano cada proceso de empleabilidad.</p>
+      <div class="auth-shapes" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
+      <div class="auth-intro__footer"><span>EFICIENCIA</span><span>MODULARIDAD</span><span>CLARIDAD</span></div>
+    </section>
 
-      <header class="auth-card__header">
-        <p class="auth-card__eyebrow">Acceso seguro</p>
-        <h1 id="login-title">Iniciar sesión</h1>
-        <p>Ingresa tus credenciales para acceder al panel de JobConnect.</p>
-      </header>
+    <main id="login-root" class="auth-card" aria-labelledby="login-title">
+      <div class="auth-card__header">
+        <div class="auth-brand" aria-hidden="true">JC</div>
+        <p class="eyebrow">ACCESO AL PANEL</p>
+      </div>
+      <h2 id="login-title">Bienvenido de nuevo.</h2>
+      <p class="auth-copy">Inicia sesión para gestionar candidatos, vacantes y procesos de contratación.</p>
 
-      <form id="login-form" class="auth-form" novalidate>
-        <div class="form-field">
-          <label for="username">Usuario</label>
-          <input id="username" name="username" type="text" autocomplete="username"
-                 required aria-required="true" placeholder="Usuario">
-          <small class="field-error" data-error-for="username"></small>
-        </div>
+      <form id="login-form" novalidate>
+        <label for="username">Usuario</label>
+        <input id="username" name="username" autocomplete="username" required>
+        <small id="username-error" class="field-error"></small>
 
-        <div class="form-field">
-          <label for="password">Contraseña</label>
-          <input id="password" name="password" type="password" autocomplete="current-password"
-                 required aria-required="true" placeholder="Contraseña">
-          <small class="field-error" data-error-for="password"></small>
-        </div>
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <small id="password-error" class="field-error"></small>
 
-        <div id="login-message" class="auth-message" role="alert" hidden></div>
-
-        <button id="login-submit" class="auth-submit" type="submit">
-          <span class="auth-submit__label">Entrar</span>
-          <span class="auth-submit__loading" hidden>Iniciando sesión…</span>
-        </button>
+        <button id="submit-login" class="btn btn--primary" type="submit">Iniciar sesión</button>
+        <button id="fill-demo" class="btn" type="button">Usar cuenta de prueba</button>
+        <p id="login-status" class="login-status" role="status" aria-live="polite"></p>
       </form>
 
-      <p class="auth-card__footer">JobConnect · Plataforma de empleabilidad</p>
-    </section>
-  </main>
-
+      <div class="auth-demo">
+        <strong>Cuenta pública de DummyJSON</strong>
+        <span>Usuario: <code>emilys</code></span>
+        <span>Contraseña: <code>emilyspass</code></span>
+      </div>
+    </main>
+  </div>
   <script type="module" src="src/js/auth/login-page.js"></script>
 </body>
 </html>

@@ -1,2 +1,1 @@
-.module--interviews { max-width:1100px; margin:auto; }
-.module--interviews .entity-card { border-left:4px solid var(--accent); }
+.module--interviews { --module-accent: #be185d; }

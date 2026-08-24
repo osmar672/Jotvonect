@@ -47,6 +47,8 @@ Ningún integrante debe comenzar su funcionalidad antes de este merge.
 | Infografía | Integrante 1 |
 | Reflexión | Integrante 1 |
 | index.html y shell | Integrante 2 |
+| Perfil y preferencias por cuenta | Integrante 2 |
+| Inicio, animaciones y estilos interactivos | Integrante 2 |
 | API, feedback y errores | Integrante 2 |
 | Vacantes | Integrante 2 |
 | Empresas | Integrante 2 |
@@ -186,4 +188,3 @@ Revisar por qué la rama tocó un archivo no autorizado.
 ## 10. Regla final
 
 El Integrante 1 entrega autenticación y sus tres módulos como componentes completos. El Integrante 2 los consume mediante imports y los integra desde app.js, sin reescribir su lógica.
-
