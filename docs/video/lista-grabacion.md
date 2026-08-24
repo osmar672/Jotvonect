@@ -1,0 +1,11 @@
+# Lista de grabación
+- [ ] Audio claro.
+- [ ] Resolución legible.
+- [ ] Duración dentro del requisito de la asignatura.
+- [ ] Login demostrado.
+- [ ] Seis módulos demostrados.
+- [ ] CRUD y feedback demostrados.
+- [ ] Responsive demostrado.
+- [ ] Consola revisada.
+- [ ] Repositorio mostrado.
+- [ ] Conclusión.

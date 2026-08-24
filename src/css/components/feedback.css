@@ -1,0 +1,1 @@
+#feedback-root{position:fixed;right:20px;top:20px;z-index:100;max-width:420px}.feedback{padding:14px 18px;border-radius:14px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);font-weight:700}.feedback--loading{border-left:4px solid var(--accent)}.feedback--success{border-left:4px solid var(--success)}.feedback--error{border-left:4px solid var(--danger)}

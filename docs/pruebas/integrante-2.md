@@ -1,0 +1,14 @@
+# Pruebas Integrante 2
+- [x] Navegación por seis módulos.
+- [x] Feedback de carga/éxito/error.
+- [x] Confirmación de DELETE.
+- [x] Manejo de errores de red.
+- [x] Cinco operaciones de vacantes.
+- [x] Cuatro operaciones de empresas.
+- [x] Cuatro operaciones de postulaciones.
+- [x] Login/logout integrado.
+- [x] Estado local.
+- [x] Responsive en breakpoints.
+- [ ] Validación manual en todos los navegadores del entorno final.
+- [ ] Revisión final de consola con API disponible.
+- [x] Integración por imports desde app.js.
