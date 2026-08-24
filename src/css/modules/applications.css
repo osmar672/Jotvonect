@@ -1,0 +1,19 @@
+.module--applications .module--applications__list {
+  align-items: stretch;
+}
+
+.module--applications .module--applications__card {
+  border-top: 0.25rem solid var(--color-warning-700);
+}
+
+.module--applications .module--applications__candidate {
+  color: var(--color-primary-800);
+  background: var(--color-primary-100);
+}
+
+.module--applications .record-card__description {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}

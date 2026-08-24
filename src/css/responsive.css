@@ -1,0 +1,125 @@
+@media (max-width: 64rem) {
+  .app-shell__layout {
+    grid-template-columns: 13.5rem minmax(0, 1fr);
+  }
+
+  .app-shell .module__form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell .form-field--full {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 48rem) {
+  .app-shell__header {
+    position: static;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .app-shell__account {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .app-shell__user {
+    text-align: left;
+  }
+
+  .app-shell__layout {
+    display: block;
+    min-height: auto;
+  }
+
+  .app-navigation {
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: var(--border-default);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .app-navigation__heading {
+    margin-left: 0;
+  }
+
+  .app-navigation__list {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .app-navigation__button {
+    width: auto;
+    white-space: nowrap;
+  }
+
+  .app-navigation__status {
+    margin: var(--space-3) 0 0;
+  }
+
+  .app-content {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .app-shell .module__header,
+  .app-shell .module__list-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 32rem) {
+  .feedback-root {
+    top: auto;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    left: var(--space-3);
+    width: auto;
+  }
+
+  .app-shell__brand-tagline {
+    display: none;
+  }
+
+  .app-shell__account {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .app-shell__logout {
+    width: 100%;
+  }
+
+  .app-shell .module__form,
+  .app-shell .card {
+    padding: var(--space-4);
+  }
+
+  .app-shell .module__form-actions,
+  .app-shell .record-card__actions,
+  .app-shell .button-group {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell .module__form-actions .button,
+  .app-shell .record-card__actions .button,
+  .app-shell .button-group .button {
+    width: 100%;
+  }
+
+  .feedback-root .delete-confirmation__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link,
+  .button {
+    transition: none;
+  }
+}

@@ -1,0 +1,21 @@
+.module--companies .module--companies__list {
+  align-items: stretch;
+}
+
+.module--companies .module--companies__card {
+  border-top: 0.25rem solid var(--color-accent-600);
+}
+
+.module--companies .module--companies__contact {
+  color: var(--color-neutral-700);
+  font-weight: 650;
+}
+
+.module--companies .module--companies__budget {
+  margin: 0;
+  border-top: var(--border-default);
+  padding-top: var(--space-3);
+  color: var(--color-primary-800);
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+}
