@@ -1,5 +1,11 @@
 import { isAuthenticated, login } from "./auth-service.js";
 
+export const DEMO_CREDENTIALS_BY_ROLE = Object.freeze({
+  "job-seeker": Object.freeze({ username: "emilys", password: "emilyspass" }),
+  employer: Object.freeze({ username: "emilys", password: "emilyspass" }),
+  admin: Object.freeze({ username: "emilys", password: "emilyspass" })
+});
+
 if (isAuthenticated()) {
   window.location.replace("index.html");
 } else {
@@ -9,6 +15,17 @@ if (isAuthenticated()) {
   const submitButton = document.querySelector("#submit-login");
   const demoButton = document.querySelector("#fill-demo");
   const status = document.querySelector("#login-status");
+
+  const getSelectedRole = () => form.querySelector("[name='accountType']:checked")?.value || "job-seeker";
+
+  function fillCredentialsForSelectedRole({ focusPassword = false } = {}) {
+    const credentials = DEMO_CREDENTIALS_BY_ROLE[getSelectedRole()] || DEMO_CREDENTIALS_BY_ROLE["job-seeker"];
+    usernameInput.value = credentials.username;
+    passwordInput.value = credentials.password;
+    clearMessages();
+    status.textContent = "Datos completados. Puedes iniciar sesión.";
+    if (focusPassword) passwordInput.focus();
+  }
 
   function clearMessages() {
     status.textContent = "";
@@ -42,11 +59,14 @@ if (isAuthenticated()) {
   }
 
   demoButton.addEventListener("click", () => {
-    usernameInput.value = "emilys";
-    passwordInput.value = "emilyspass";
-    clearMessages();
-    usernameInput.focus();
+    fillCredentialsForSelectedRole({ focusPassword: true });
   });
+
+  for (const roleInput of form.querySelectorAll("[name='accountType']")) {
+    roleInput.addEventListener("click", () => fillCredentialsForSelectedRole());
+  }
+
+  fillCredentialsForSelectedRole();
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
@@ -56,7 +76,7 @@ if (isAuthenticated()) {
     status.textContent = "Validando credenciales…";
 
     try {
-      await login(usernameInput.value, passwordInput.value);
+      await login(usernameInput.value, passwordInput.value, globalThis.fetch, getSelectedRole());
       status.textContent = "Sesión iniciada. Abriendo el panel…";
       status.className = "login-status is-success";
       window.location.replace("index.html");

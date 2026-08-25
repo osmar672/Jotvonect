@@ -1,0 +1,10 @@
+.splash-cursor {
+  contain: strict;
+  user-select: none;
+}
+
+@media (max-width: 720px), (pointer: coarse) {
+  .splash-cursor {
+    display: none;
+  }
+}

@@ -56,3 +56,18 @@ test("el servidor Node devuelve errores controlados", async t => {
   const disallowedMethod = await fetch(`${baseUrl}/index.html`, { method: "POST" });
   assert.equal(disallowedMethod.status, 405);
 });
+
+test("el endpoint del asistente protege la configuración de Gemini", async t => {
+  const previousKeys = { GEMINI_API_KEY: process.env.GEMINI_API_KEY, GOOGLE_API_KEY: process.env.GOOGLE_API_KEY, API_KEY: process.env.API_KEY };
+  delete process.env.GEMINI_API_KEY;
+  delete process.env.GOOGLE_API_KEY;
+  delete process.env.API_KEY;
+  const { server, baseUrl } = await startServer();
+  t.after(() => {
+    for (const [key, value] of Object.entries(previousKeys)) { if (value) process.env[key] = value; else delete process.env[key]; }
+    return new Promise(resolve => server.close(resolve));
+  });
+  const response = await fetch(`${baseUrl}/api/assistant`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ role: "job-seeker", messages: [{ role: "user", text: "Hola" }] }) });
+  assert.equal(response.status, 503);
+  assert.match((await response.json()).error, /GEMINI_API_KEY/);
+});

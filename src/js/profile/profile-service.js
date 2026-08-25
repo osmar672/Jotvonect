@@ -1,9 +1,9 @@
 export const PROFILE_KEY_PREFIX = "jobconnect.profile.";
 
 export const ACCOUNT_TYPES = Object.freeze([
-  Object.freeze({ value: "job-seeker", label: "Busco trabajo" }),
-  Object.freeze({ value: "recruiter", label: "Soy reclutador/a" }),
-  Object.freeze({ value: "company", label: "Represento una empresa" })
+  Object.freeze({ value: "job-seeker", label: "Empleado / busco trabajo" }),
+  Object.freeze({ value: "employer", label: "Empleador" }),
+  Object.freeze({ value: "admin", label: "Administrador" })
 ]);
 
 export const SOFT_SKILLS = Object.freeze([
@@ -60,7 +60,7 @@ export function createDefaultProfile(user = {}) {
   const fullName = suppliedName || cleanText(user.username, "Emily Johnson");
 
   return {
-    accountType: "job-seeker",
+    accountType: ACCOUNT_TYPE_VALUES.has(user.accountType) ? user.accountType : "job-seeker",
     fullName,
     email: cleanText(user.email, "emily.johnson@example.com"),
     country: "Costa Rica",
@@ -98,7 +98,7 @@ export function normalizeProfile(input = {}, user = {}) {
   const company = input.company ?? {};
 
   return {
-    accountType: ACCOUNT_TYPE_VALUES.has(input.accountType) ? input.accountType : defaults.accountType,
+    accountType: ACCOUNT_TYPE_VALUES.has(input.accountType) || input.accountType === "recruiter" ? input.accountType : (input.accountType === "company" ? "employer" : defaults.accountType),
     fullName: cleanText(input.fullName, defaults.fullName),
     email: cleanText(input.email, defaults.email),
     country: cleanText(input.country, defaults.country),
