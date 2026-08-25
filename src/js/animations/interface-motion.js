@@ -1,7 +1,7 @@
 import { gsap } from "../../../node_modules/gsap/index.js";
 
 function prefersReducedMotion() {
-  return globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+  return globalThis.document?.documentElement?.classList?.contains("low-performance") || (globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false);
 }
 
 function hasPrecisePointer() {
@@ -76,7 +76,57 @@ export function createInterfaceMotion(root = globalThis.document?.querySelector?
 
   function revealPanel(panel) {
     if (reducedMotion || !panel) return;
-    const targets = panel.querySelectorAll(".navigation-panel__intro > *, .nav-item, .profile-summary, .profile-preview, .profile-form-section");
+
+    const isNavigation = panel.id === "navigation-panel";
+    const introTargets = panel.querySelectorAll(".navigation-panel__intro > *");
+    const itemTargets = panel.querySelectorAll(".nav-item");
+    const profileTargets = panel.querySelectorAll(".profile-summary, .profile-preview, .profile-form-section");
+
+    if (isNavigation) {
+      const intro = asElements(introTargets);
+      const items = asElements(itemTargets);
+      const closeButton = panel.querySelector(".panel-close");
+      const all = [...intro, ...items, closeButton].filter(Boolean);
+
+      if (!all.length) return;
+
+      gsap.killTweensOf(all);
+      gsap.set(all, { clearProps: "transform,opacity,filter" });
+
+      const tl = gsap.timeline();
+      tl.fromTo(
+        closeButton,
+        { opacity: 0, rotation: -90, scale: 0.72 },
+        { opacity: 1, rotation: 0, scale: 1, duration: 0.45, ease: "back.out(1.7)" },
+        0.18
+      );
+      tl.fromTo(
+        intro,
+        { opacity: 0, y: 28, rotate: 2 },
+        { opacity: 1, y: 0, rotate: 0, duration: 0.7, ease: "power4.out", stagger: 0.08 },
+        0.12
+      );
+      tl.fromTo(
+        items,
+        { opacity: 0, yPercent: 120, rotate: 8, transformOrigin: "left center" },
+        {
+          opacity: 1,
+          yPercent: 0,
+          rotate: 0,
+          duration: 0.82,
+          ease: "power4.out",
+          stagger: { each: 0.085, from: "start" }
+        },
+        0.28
+      );
+      tl.call(() => {
+        gsap.set(all, { clearProps: "transform,opacity,filter" });
+      });
+      remember(tl);
+      return;
+    }
+
+    const targets = [...asElements(profileTargets)];
     if (!targets.length) return;
 
     remember(gsap.fromTo(targets, {
@@ -92,6 +142,48 @@ export function createInterfaceMotion(root = globalThis.document?.querySelector?
       ease: "power3.out",
       clearProps: "transform,opacity"
     }));
+  }
+
+  function animateMenuToggle(trigger, opening) {
+    if (!trigger) return;
+    const icon = trigger.querySelector(".menu-launch__icon");
+    const dots = icon ? [...icon.querySelectorAll("i")] : [];
+    if (!dots.length) return;
+
+    if (reducedMotion) {
+      gsap.set(dots, { clearProps: "transform,opacity" });
+      return;
+    }
+
+    gsap.killTweensOf(dots);
+    const timeline = gsap.timeline();
+
+    if (opening) {
+      timeline.to(dots, {
+        duration: 0.18,
+        scale: 0.7,
+        opacity: 0.7,
+        stagger: 0.025,
+        ease: "power2.out"
+      });
+      timeline.to(dots[0], { x: 4, y: 4, rotate: 45, duration: 0.34, ease: "power3.out" }, 0.12);
+      timeline.to(dots[1], { x: -4, y: 4, rotate: -45, duration: 0.34, ease: "power3.out" }, 0.12);
+      timeline.to(dots[2], { x: -4, y: -4, rotate: -45, duration: 0.34, ease: "power3.out" }, 0.12);
+      timeline.to(dots[3], { x: 4, y: -4, rotate: 45, duration: 0.34, ease: "power3.out" }, 0.12);
+    } else {
+      timeline.to(dots, {
+        x: 0,
+        y: 0,
+        rotate: 0,
+        scale: 1,
+        opacity: 1,
+        duration: 0.32,
+        stagger: 0.025,
+        ease: "power3.inOut"
+      });
+    }
+
+    remember(timeline);
   }
 
   function revealCards(list) {
@@ -242,6 +334,7 @@ export function createInterfaceMotion(root = globalThis.document?.querySelector?
     transitionOut,
     transitionIn,
     revealPanel,
+    animateMenuToggle,
     revealCards,
     highlight,
     removeCard,

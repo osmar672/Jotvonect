@@ -13,10 +13,12 @@ export const moduleConfig = Object.freeze({
   createPath: "/products/add",
   listKey: "products",
   updateMethods: ["put", "patch"],
+  employeeCanApply: true,
   fields: [
     { name: "title", label: "Título de la vacante", required: true },
     { name: "description", label: "Descripción", type: "textarea", required: true },
     { name: "category", label: "Área o categoría", required: true },
+    { name: "distanceKm", label: "Distancia máxima de la vacante (km)", type: "number", min: 0, max: 1000, step: 1, required: true, getValue: item => item.distanceKm ?? 25 },
     { name: "price", label: "Referencia salarial", type: "number", min: 0, step: 0.01, required: true }
   ],
   card: item => ({
@@ -26,6 +28,7 @@ export const moduleConfig = Object.freeze({
     meta: [
       `ID: ${item.id ?? "local"}`,
       `Área: ${item.category || "sin categoría"}`,
+      `Distancia: ${Number(item.distanceKm ?? 25)} km`,
       `Referencia: $${Number(item.price || 0).toFixed(2)}`
     ]
   })

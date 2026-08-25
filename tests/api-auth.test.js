@@ -63,6 +63,12 @@ test("login muestra el mensaje devuelto por la API cuando las credenciales falla
   assert.equal(isAuthenticated(), false);
 });
 
+test("login conserva el tipo de usuario seleccionado", async () => {
+  const mockFetch = async () => jsonResponse({ id: 2, username: "empresa", accessToken: "token" });
+  await login("empresa", "clave", mockFetch, "employer");
+  assert.equal(getCurrentUser().accountType, "employer");
+});
+
 test("requireAuth bloquea el panel sin token y logout limpia la sesión", () => {
   let redirect = null;
   globalThis.window = { location: { replace: value => { redirect = value; } } };

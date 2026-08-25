@@ -2,11 +2,12 @@ import { gsap } from "../../../node_modules/gsap/index.js";
 import { ScrollTrigger } from "../../../node_modules/gsap/ScrollTrigger.js";
 import Lenis from "../../../node_modules/lenis/dist/lenis.mjs";
 import { animate, stagger } from "../../../node_modules/animejs/dist/modules/index.js";
+import { initBlurText } from "./blur-text.js?v=lumen-1";
 
 gsap.registerPlugin(ScrollTrigger);
 
 function prefersReducedMotion() {
-  return globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+  return globalThis.document?.documentElement?.classList?.contains("low-performance") || (globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false);
 }
 
 function supportsPrecisePointer() {
@@ -21,16 +22,14 @@ function setMotionLabel(root, label) {
 function addPointerEffects(root, hero) {
   if (!hero || !supportsPrecisePointer()) return () => {};
 
-  const aura = hero.querySelector("[data-cursor-aura]");
   const title = hero.querySelector("[data-hero-title]");
   const particles = hero.querySelector("[data-particle-field]");
+  const aura = hero.querySelector("[data-cursor-aura]");
   const interactiveElements = [...root.querySelectorAll(".home-button")];
   const cleanup = [];
 
-  if (aura && title && particles) {
+  if (title && particles) {
     gsap.set(title, { transformPerspective: 1200, transformOrigin: "center center" });
-    const moveAuraX = gsap.quickTo(aura, "x", { duration: 0.48, ease: "power3.out" });
-    const moveAuraY = gsap.quickTo(aura, "y", { duration: 0.48, ease: "power3.out" });
     const rotateTitleX = gsap.quickTo(title, "rotationX", { duration: 0.65, ease: "power3.out" });
     const rotateTitleY = gsap.quickTo(title, "rotationY", { duration: 0.65, ease: "power3.out" });
     const moveParticlesX = gsap.quickTo(particles, "x", { duration: 0.8, ease: "power3.out" });
@@ -43,13 +42,11 @@ function addPointerEffects(root, hero) {
       const normalizedX = localX / bounds.width - 0.5;
       const normalizedY = localY / bounds.height - 0.5;
 
-      moveAuraX(localX);
-      moveAuraY(localY);
       rotateTitleX(normalizedY * -5);
       rotateTitleY(normalizedX * 7);
       moveParticlesX(normalizedX * 42);
       moveParticlesY(normalizedY * 28);
-      aura.classList.add("is-visible");
+      if (aura) gsap.to(aura, { x: localX, y: localY, opacity: 1, duration: 0.34, ease: "power3.out", overwrite: "auto" });
     };
 
     const resetHeroPointer = () => {
@@ -57,7 +54,7 @@ function addPointerEffects(root, hero) {
       rotateTitleY(0);
       moveParticlesX(0);
       moveParticlesY(0);
-      aura.classList.remove("is-visible");
+      if (aura) gsap.to(aura, { opacity: 0, duration: 0.3, overwrite: "auto" });
     };
 
     hero.addEventListener("pointermove", handleHeroPointer);
@@ -122,6 +119,15 @@ export function initHomeMotion(root) {
   root.classList.add("motion-active");
   setMotionLabel(root, "Movimiento interactivo activo");
 
+  const removeBlurText = initBlurText(root, {
+    delay: 200,
+    animateBy: "words",
+    direction: "top",
+    onAnimationComplete: () => {
+      root.dispatchEvent(new globalThis.CustomEvent("jobconnect:blur-text-complete"));
+    }
+  });
+
   const hero = root.querySelector(".home-hero");
   const particleField = root.querySelector("[data-particle-field]");
   const portal = root.querySelector("[data-portal]");
@@ -135,14 +141,7 @@ export function initHomeMotion(root) {
     const intro = gsap.timeline({ defaults: { ease: "power4.out" } });
     intro
       .from("[data-hero-kicker], .home-status", { opacity: 0, y: 20, duration: 0.55 })
-      .from("[data-hero-line]", {
-        opacity: 0,
-        yPercent: 115,
-        rotationZ: 2.5,
-        stagger: 0.12,
-        duration: 1.05
-      }, "-=0.18")
-      .from("[data-particle-field]", { opacity: 0, scale: 0.74, y: 80, duration: 1.1 }, "-=0.72")
+      .from("[data-particle-field]", { opacity: 0, scale: 0.74, y: 80, duration: 1.1 }, "-=0.18")
       .from("[data-hero-footer]", { opacity: 0, y: 34, duration: 0.7 }, "-=0.6")
       .from(".home-scroll-cue", { opacity: 0, x: -18, duration: 0.45 }, "-=0.3");
 
@@ -162,31 +161,6 @@ export function initHomeMotion(root) {
           }
         }
       );
-    }
-
-    if (hero) {
-      const lines = hero.querySelectorAll("[data-hero-line]");
-      if (lines[0]) {
-        gsap.to(lines[0], {
-          xPercent: -14,
-          ease: "none",
-          scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.75 }
-        });
-      }
-      if (lines[1]) {
-        gsap.to(lines[1], {
-          xPercent: 16,
-          ease: "none",
-          scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.9 }
-        });
-      }
-      if (lines[2]) {
-        gsap.to(lines[2], {
-          xPercent: -9,
-          ease: "none",
-          scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 1.05 }
-        });
-      }
     }
 
     if (particleField) {
@@ -335,6 +309,7 @@ export function initHomeMotion(root) {
     particleMotion?.cancel();
     observedTweens.forEach(tween => tween.kill());
     removePointerEffects();
+    removeBlurText();
     gsapContext.revert();
     lenis?.destroy();
     if (animationFrame) cancelAnimationFrame(animationFrame);

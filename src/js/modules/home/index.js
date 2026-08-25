@@ -205,7 +205,7 @@ function setupStandardsExplorer(container) {
       return listItem;
     }));
 
-    const reducedMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+    const reducedMotion = document.documentElement.classList.contains("low-performance") || (globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false);
     if (!reducedMotion) {
       detail.animate?.([
         { opacity: 0.72, transform: "translateY(10px) scale(0.992)" },
@@ -301,7 +301,7 @@ function setupProcessExplorer(container) {
     text.textContent = item.text;
     progress.style.width = `${(index + 1) / processSteps.length * 100}%`;
 
-    const reducedMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+    const reducedMotion = document.documentElement.classList.contains("low-performance") || (globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false);
     if (!reducedMotion) {
       stage.animate?.([
         { transform: "scale(0.985)", filter: "saturate(0.7)" },
@@ -351,6 +351,14 @@ function setupProcessExplorer(container) {
 export function buildHomeMarkup() {
   return `<div class="home-experience">
     <section class="home-hero" aria-labelledby="home-title">
+      <video
+        class="home-jellyfish-video"
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260813_115057_94c3699b-0fd1-4124-bcf3-3626bb8c1f77.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-hidden="true"></video>
       <span class="home-cursor-aura" data-cursor-aura aria-hidden="true"></span>
       <div class="home-particle-field" data-particle-field aria-hidden="true">${buildParticleMarkup()}</div>
       <div class="home-hero__top">
@@ -358,9 +366,9 @@ export function buildHomeMarkup() {
         <span class="home-status"><span class="home-status__dot" aria-hidden="true"></span><span data-motion-label>Preparando movimiento</span></span>
       </div>
       <h1 id="home-title" class="home-title" data-hero-title aria-label="Conectamos talento con futuro">
-        <span data-hero-line>Conectamos</span>
-        <span class="home-title__outline" data-hero-line>talento</span>
-        <span data-hero-line>con futuro.</span>
+        <span data-hero-line data-blur-text>Conectamos</span>
+        <span class="home-title__outline" data-hero-line data-blur-text>talento</span>
+        <span data-hero-line data-blur-text>con futuro.</span>
       </h1>
       <div class="home-hero__footer" data-hero-footer>
         <p>Una plataforma digital para organizar oportunidades, personas y procesos de empleabilidad desde un solo lugar.</p>
@@ -384,17 +392,8 @@ export function buildHomeMarkup() {
       </div>
     </section>
 
-    <section class="home-standards" aria-labelledby="standards-title" data-reveal-section>
-      <div class="home-section-label home-section-label--light"><span>02</span><p>ESTÁNDARES ACTUALES</p></div>
-      <div class="home-standards__heading">
-        <h2 id="standards-title">Construida para funcionar.<br><em>Diseñada para evolucionar.</em></h2>
-        <p>La calidad no se agrega al final: guía la arquitectura, la interacción y cada decisión del producto.</p>
-      </div>
-      ${buildStandardsMarkup()}
-    </section>
-
     <section class="home-process" aria-labelledby="process-title" data-reveal-section>
-      <div class="home-section-label"><span>03</span><p>NUESTRA FORMA DE TRABAJAR</p></div>
+      <div class="home-section-label"><span>02</span><p>NUESTRA FORMA DE TRABAJAR</p></div>
       <div class="home-process__heading">
         <h2 id="process-title">Del problema a una solución verificable.</h2>
         <p>Un proceso simple para reducir incertidumbre y entregar valor real.</p>
@@ -434,16 +433,14 @@ export async function mount(container, services = {}) {
   };
 
   container.addEventListener("click", clickHandler);
-  const removeStandardsExplorer = setupStandardsExplorer(container);
   const removeProcessExplorer = setupProcessExplorer(container);
   removeEvents = () => {
     container.removeEventListener("click", clickHandler);
-    removeStandardsExplorer();
     removeProcessExplorer();
   };
 
   try {
-    const motion = services.motion ?? await import("../../animations/home-motion.js");
+    const motion = services.motion ?? await import("../../animations/home-motion.js?v=lumen-1");
     if (version !== mountVersion || mountedContainer !== container) return;
     removeMotion = motion.initHomeMotion?.(container) ?? (() => {});
   } catch (error) {

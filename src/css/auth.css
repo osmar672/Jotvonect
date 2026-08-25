@@ -193,6 +193,60 @@
   margin-top: 30px;
 }
 
+.role-selector {
+  margin: 0 0 10px;
+  border: 0;
+  padding: 0;
+}
+
+.role-selector legend {
+  margin-bottom: 10px;
+  color: #40384d;
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.role-selector__grid {
+  display: grid;
+  gap: 8px;
+}
+
+.role-selector__grid label {
+  cursor: pointer;
+}
+
+.role-selector__grid input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.role-selector__grid span {
+  display: grid;
+  gap: 2px;
+  border: 1px solid #d9d6df;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.48);
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.role-selector__grid small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.role-selector__grid input:checked + span {
+  border-color: #3025ff;
+  background: rgba(48, 37, 255, 0.08);
+  transform: translateX(3px);
+}
+
+.role-selector__grid input:focus-visible + span {
+  outline: 2px solid #3025ff;
+  outline-offset: 2px;
+}
+
 #login-form > label {
   margin-top: 7px;
   color: #40384d;

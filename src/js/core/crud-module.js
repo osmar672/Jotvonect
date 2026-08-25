@@ -1,4 +1,5 @@
 let localKeySequence = 0;
+import { canManageModule, ROLES } from "../auth/access-control.js";
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, character => ({
@@ -233,10 +234,15 @@ export function createCrudModule(config) {
 
   function cardMarkup(item, index) {
     const view = config.card(item);
-    const methods = config.updateMethods.map(method => {
+    const manageable = !services?.role || canManageModule(services.role, config.moduleMeta.id);
+    const methods = manageable ? config.updateMethods.map(method => {
       const label = method === "put" ? "Editar (PUT)" : "Editar (PATCH)";
       return `<button class="btn btn--compact" type="button" data-action="edit" data-method="${method}" data-key="${escapeAttribute(item.__clientKey)}">${label}</button>`;
-    }).join("");
+    }).join("") : "";
+    const resumes = services?.role === ROLES.EMPLOYEE && config.employeeCanApply ? (services.resumes?.list?.() || []) : [];
+    const applicationAction = services?.role === ROLES.EMPLOYEE && config.employeeCanApply
+      ? `<div class="vacancy-apply"><select data-resume-choice aria-label="Currículum para ${escapeAttribute(view.title)}"><option value="">Elegir currículum…</option>${resumes.map(resume => `<option value="${escapeAttribute(resume.id)}">${escapeHtml(resume.name)}</option>`).join("")}</select><button class="btn btn--compact btn--primary" type="button" data-action="apply" data-key="${escapeAttribute(item.__clientKey)}">Aplicar</button></div>`
+      : "";
 
     const metadata = (view.meta || []).map(value => `<span>${escapeHtml(value)}</span>`).join("");
     const status = view.status || (item.__isLocal ? "NUEVO" : "ACTIVO");
@@ -256,8 +262,9 @@ export function createCrudModule(config) {
         <div class="entity-card__meta">${metadata}</div>
       </div>
       <div class="card-actions">
+        ${applicationAction}
         ${methods}
-        <button class="btn btn--compact btn--danger" type="button" data-action="delete" data-key="${escapeAttribute(item.__clientKey)}">Eliminar</button>
+        ${manageable ? `<button class="btn btn--compact btn--danger" type="button" data-action="delete" data-key="${escapeAttribute(item.__clientKey)}">Eliminar</button>` : ""}
       </div>
     </article>`;
   }
@@ -508,14 +515,27 @@ export function createCrudModule(config) {
   }
 
   function bindEvents() {
-    bind("click", "[data-action='new']", () => openForm());
+    const manageable = !services?.role || canManageModule(services.role, config.moduleMeta.id);
+    bind("click", "[data-action='new']", () => { if (manageable) openForm(); });
     bind("click", "[data-action='cancel']", closeForm);
     bind("click", "[data-action='reload']", loadItems);
     bind("click", "[data-action='edit']", (_event, button) => {
+      if (!manageable) throw new Error("Tu rol no puede modificar este registro.");
       const item = getItemByKey(items, button.dataset.key);
       if (item) openForm(item, button.dataset.method);
     });
-    bind("click", "[data-action='delete']", (_event, button) => handleDelete(button));
+    bind("click", "[data-action='delete']", (_event, button) => {
+      if (!manageable) throw new Error("Tu rol no puede eliminar este registro.");
+      return handleDelete(button);
+    });
+    bind("click", "[data-action='apply']", (_event, button) => {
+      if (services.role !== ROLES.EMPLOYEE || !config.employeeCanApply) throw new Error("Tu rol no puede aplicar a vacantes.");
+      const item = getItemByKey(items, button.dataset.key);
+      const resumeId = button.closest?.(".entity-card")?.querySelector?.("[data-resume-choice]")?.value;
+      if (!resumeId) throw new Error("Primero elige uno de tus currículums.");
+      services.resumes.apply(item, resumeId);
+      services.feedback.success(`Aplicaste a “${config.card(item).title}” con el currículum seleccionado.`);
+    });
     bind("click", "[data-view-mode]", (_event, button) => {
       viewMode = button.dataset.viewMode === "list" ? "list" : "grid";
       for (const option of container.querySelectorAll?.("[data-view-mode]") || []) {
@@ -584,6 +604,10 @@ export function createCrudModule(config) {
     viewMode = "grid";
     mounted = true;
     container.innerHTML = buildModuleLayout(config);
+
+    const manageable = !services?.role || canManageModule(services.role, config.moduleMeta.id);
+    const createButton = query("[data-action='new']");
+    if (createButton && !manageable) createButton.remove?.();
 
     bindEvents();
     await loadItems();

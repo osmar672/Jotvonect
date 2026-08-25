@@ -9,6 +9,7 @@ const MODULE_DESCRIPTIONS = Object.freeze({
   applications: "Da seguimiento a candidaturas y procesos activos.",
   interviews: "Registra entrevistas, observaciones y notas de evaluación.",
   tasks: "Planifica pendientes y marca el trabajo completado."
+  ,resumes: "Guarda distintas versiones de tu currículum para postularte."
 });
 
 function escapeHtml(value) {
@@ -143,6 +144,10 @@ export function renderShell({ root, modules, onSelect, onLogout, profileService,
     document.body.classList.remove("has-app-panel");
     activePanel = null;
 
+    if (panels.navigation?.trigger) {
+      interfaceMotion?.animateMenuToggle?.(panels.navigation.trigger, false);
+    }
+
     if (restoreFocus) previousFocus?.focus?.();
     previousFocus = null;
   }
@@ -167,6 +172,7 @@ export function renderShell({ root, modules, onSelect, onLogout, profileService,
 
     const firstControl = panel.element.querySelector("button, input, select, textarea");
     globalThis.requestAnimationFrame?.(() => firstControl?.focus());
+    interfaceMotion?.animateMenuToggle?.(panel.trigger, true);
     interfaceMotion?.revealPanel?.(panel.element);
   }
 

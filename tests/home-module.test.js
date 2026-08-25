@@ -31,7 +31,7 @@ function createFakeContainer() {
   };
 }
 
-test("Inicio presenta la empresa, los estándares y el proceso de solución", () => {
+test("Inicio presenta la empresa y el proceso de solución sin la sección de estándares", () => {
   const markup = buildHomeMarkup();
 
   assert.deepEqual(moduleMeta, {
@@ -41,23 +41,17 @@ test("Inicio presenta la empresa, los estándares y el proceso de solución", ()
     description: "Conoce JobConnect, sus estándares y la propuesta de valor."
   });
   assert.match(markup, /Somos una empresa digital orientada a la gestión de empleabilidad/);
-  assert.match(markup, /Eficiencia/);
-  assert.match(markup, /Modularidad/);
-  assert.match(markup, /Buenas prácticas/);
-  assert.match(markup, /Código claro/);
-  assert.match(markup, /Accesibilidad/);
-  assert.match(markup, /Resolución de problemas/);
+  assert.doesNotMatch(markup, /ESTÁNDARES ACTUALES|Diseñada para evolucionar/);
   assert.match(markup, /data-cursor-aura/);
+  assert.match(markup, /home-jellyfish-video/);
+  assert.match(markup, /autoplay[\s\S]*muted[\s\S]*loop[\s\S]*playsinline/);
   assert.match(markup, /data-portal/);
   assert.match(markup, /data-final-orbit/);
   assert.match(markup, /Preparando movimiento/);
-  assert.match(markup, /data-standards-explorer/);
-  assert.match(markup, /role="tablist"/);
-  assert.match(markup, /data-standard-detail/);
-  assert.match(markup, /data-standard-progress/);
+  assert.doesNotMatch(markup, /data-standards-explorer|data-standard-detail|data-standard-progress/);
   assert.match(markup, /data-process-story/);
   assert.equal((markup.match(/data-process-step/g) ?? []).length, 4);
-  assert.equal((markup.match(/data-standard-index=/g) ?? []).length, 6);
+  assert.equal((markup.match(/data-standard-index=/g) ?? []).length, 0);
   assert.doesNotMatch(markup, /home-metrics|home-marquee|módulos conectados|operaciones HTTP|núcleo reutilizable/i);
   assert.equal((markup.match(/data-particle(?=\s|>)/g) ?? []).length, 34);
 

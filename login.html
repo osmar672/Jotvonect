@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Inicio de sesión de JobConnect">
   <title>JobConnect | Iniciar sesión</title>
+  <link href="https://db.onlinewebfonts.com/c/ca3d10781128664daddf89bf2e2d1305?family=Graphik+LCG+Regular+Regular" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/css/base.css">
   <link rel="stylesheet" href="src/css/auth.css">
+  <link rel="stylesheet" href="src/css/lumen-theme.css">
 </head>
 <body class="auth-page">
   <div class="auth-layout">
@@ -30,6 +33,15 @@
       <p class="auth-copy">Inicia sesión para gestionar candidatos, vacantes y procesos de contratación.</p>
 
       <form id="login-form" novalidate>
+        <fieldset class="role-selector">
+          <legend>¿Cómo deseas ingresar?</legend>
+          <div class="role-selector__grid">
+            <label><input type="radio" name="accountType" value="job-seeker" checked><span><strong>Empleado</strong><small>Selecciona para completar el acceso</small></span></label>
+            <label><input type="radio" name="accountType" value="employer"><span><strong>Empleador</strong><small>Selecciona para completar el acceso</small></span></label>
+            <label><input type="radio" name="accountType" value="admin"><span><strong>Administrador</strong><small>Selecciona para completar el acceso</small></span></label>
+          </div>
+        </fieldset>
+
         <label for="username">Usuario</label>
         <input id="username" name="username" autocomplete="username" required>
         <small id="username-error" class="field-error"></small>
@@ -39,7 +51,7 @@
         <small id="password-error" class="field-error"></small>
 
         <button id="submit-login" class="btn btn--primary" type="submit">Iniciar sesión</button>
-        <button id="fill-demo" class="btn" type="button">Usar cuenta de prueba</button>
+        <button id="fill-demo" class="btn" type="button">Completar datos de acceso</button>
         <p id="login-status" class="login-status" role="status" aria-live="polite"></p>
       </form>
 

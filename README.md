@@ -63,7 +63,7 @@ Las pruebas verifican:
 - Navegación entre Inicio y los seis módulos de gestión.
 - Apertura del panel de navegación y ausencia de la antigua barra lateral fija.
 - Perfil por cuenta, campos laborales, tipos de usuario, movilidad y persistencia local.
-- Contenido corporativo, explorador interactivo de estándares, narrativa de scroll y botones de acceso rápido de Inicio.
+- Contenido corporativo, narrativa de scroll y botones de acceso rápido de Inicio.
 - Tema claro/oscuro persistente y transiciones entre módulos.
 - Vistas de tarjetas/lista, ordenamiento, indicadores, skeletons y editor lateral de los CRUD.
 - Formularios, botones de edición y eliminación, y estado local.
@@ -97,7 +97,7 @@ Los seis módulos comparten una experiencia consistente: indicadores con contado
 
 ## Inicio y experiencia visual
 
-Inicio comunica que JobConnect es una empresa digital enfocada en conectar talento, organizaciones y equipos de reclutamiento. También explica los principios aplicados al producto: eficiencia, modularidad, buenas prácticas, claridad de código, accesibilidad y resolución de problemas. Esa información se presenta en un explorador interactivo: al seleccionar una opción con el mouse, el tacto o el teclado, el panel muestra su explicación y tres puntos clave.
+Inicio comunica que JobConnect es una empresa digital enfocada en conectar talento, organizaciones y equipos de reclutamiento. La experiencia continúa directamente hacia la narrativa del proceso de trabajo y los accesos principales del producto.
 
 La dirección visual toma como referencia experiencias digitales contemporáneas como Lusion: alto contraste, tipografía de gran escala, bloques de color, figuras geométricas y una experiencia que responde al desplazamiento y al puntero. La implementación es original y utiliza tres bibliotecas con responsabilidades separadas:
 
@@ -198,7 +198,24 @@ JobConnect/
 
 ```text
 GET /health
+POST /api/assistant
 ```
+
+### Asistente de IA con Gemini
+
+El chat “Conecta” usa la API real de Gemini desde el servidor. Crea una clave en Google AI Studio y arranca la aplicación así:
+
+```bash
+GEMINI_API_KEY="tu_clave" npm start
+```
+
+Opcionalmente puedes cambiar el modelo (por defecto `gemini-2.5-flash`):
+
+```bash
+GEMINI_API_KEY="tu_clave" GEMINI_MODEL="gemini-2.5-flash" npm start
+```
+
+La clave se lee exclusivamente en `server.js`; nunca debe guardarse en Git ni enviarse al frontend.
 
 Respuesta esperada:
 
@@ -229,3 +246,14 @@ La carpeta `docs/` contiene planificación, arquitectura, bitácora de consultas
 - Si aparece un error de conexión, confirma que `https://dummyjson.com` sea accesible desde el navegador.
 - Si la sesión parece inválida, cierra sesión o elimina las claves `jobconnect.token` y `jobconnect.user` de `localStorage`.
 - Si los cambios desaparecen al recargar, es el comportamiento esperado de las operaciones simuladas de DummyJSON.
+
+
+### Animación BlurText del hero
+
+La animación original de entrada y desplazamiento de las palabras del hero fue reemplazada por una implementación equivalente a `BlurText`, usando Motion para Web y un retraso de 200 ms entre palabras. Para instalar la dependencia:
+
+```bash
+npm install motion
+```
+
+La implementación está en `src/js/animations/blur-text.js` y se inicializa desde `src/js/animations/home-motion.js`.

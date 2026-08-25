@@ -42,10 +42,10 @@ export function getProfileCompletion(profile) {
   const common = [profile.fullName, profile.email, profile.country, profile.province];
   let specific = [];
 
-  if (profile.accountType === "recruiter") {
+  if (["employer", "recruiter"].includes(profile.accountType)) {
     specific = [profile.recruiter.organization, profile.recruiter.position, profile.recruiter.coverage, profile.recruiter.recruitingAreas];
-  } else if (profile.accountType === "company") {
-    specific = [profile.company.companyName, profile.company.sector, profile.company.description, profile.company.vacancyTypes];
+  } else if (profile.accountType === "admin") {
+    specific = ["Acceso total"];
   } else {
     specific = [
       profile.jobSeeker.desiredJob,
@@ -61,7 +61,7 @@ export function getProfileCompletion(profile) {
 }
 
 function getPreviewData(profile) {
-  if (profile.accountType === "recruiter") {
+  if (["employer", "recruiter"].includes(profile.accountType)) {
     return {
       eyebrow: "PERFIL DE RECLUTAMIENTO",
       title: profile.recruiter.position || "Especialista de talento",
@@ -71,13 +71,13 @@ function getPreviewData(profile) {
     };
   }
 
-  if (profile.accountType === "company") {
+  if (profile.accountType === "admin") {
     return {
-      eyebrow: "PERFIL DE EMPRESA",
-      title: profile.company.companyName || "Nombre de la empresa",
-      subtitle: profile.company.sector || "Sector por definir",
-      note: profile.company.remoteWork ? "Oportunidades remotas disponibles" : `${profile.province}, ${profile.country}`,
-      tags: asPreviewTags(profile.company.vacancyTypes)
+      eyebrow: "PERFIL ADMINISTRATIVO",
+      title: "Administrador de JobConnect",
+      subtitle: profile.fullName,
+      note: "Acceso completo a todos los módulos",
+      tags: ["Usuarios", "Empresas", "Vacantes", "Postulaciones"]
     };
   }
 
@@ -116,7 +116,7 @@ function buildSoftSkillsMarkup(selectedSkills = []) {
 }
 
 export function buildAccountFieldsMarkup(profile) {
-  if (profile.accountType === "recruiter") {
+  if (["employer", "recruiter"].includes(profile.accountType)) {
     return `<section class="profile-form-section" aria-labelledby="recruiter-fields-title">
       <div class="profile-section-heading">
         <span>02</span>
@@ -143,29 +143,19 @@ export function buildAccountFieldsMarkup(profile) {
     </section>`;
   }
 
+  if (profile.accountType === "admin") {
+    return `<section class="profile-form-section"><div class="profile-section-heading"><span>02</span><div><h3>Acceso administrativo</h3><p>Esta cuenta puede consultar y gestionar todas las secciones de JobConnect.</p></div></div></section>`;
+  }
+
   if (profile.accountType === "company") {
     return `<section class="profile-form-section" aria-labelledby="company-fields-title">
-      <div class="profile-section-heading">
-        <span>02</span>
-        <div><h3 id="company-fields-title">Perfil de empresa</h3><p>Describe la organización y las oportunidades que ofrece.</p></div>
-      </div>
+      <div class="profile-section-heading"><span>02</span><div><h3 id="company-fields-title">Perfil de empresa</h3><p>Describe la organización y sus oportunidades.</p></div></div>
       <div class="profile-field-grid">
-        <label>Nombre de la empresa
-          <input name="companyName" value="${escapeHtml(profile.company.companyName)}" placeholder="Nombre comercial">
-        </label>
-        <label>Sector
-          <input name="sector" value="${escapeHtml(profile.company.sector)}" placeholder="Ej. Tecnología">
-        </label>
-        <label class="profile-field--wide">Descripción
-          <textarea name="companyDescription" placeholder="Qué hace la empresa y qué la diferencia">${escapeHtml(profile.company.description)}</textarea>
-        </label>
-        <label class="profile-field--wide">Tipos de vacantes
-          <textarea name="vacancyTypes" placeholder="Una por línea: Desarrollo, Soporte, Diseño…">${asLines(profile.company.vacancyTypes)}</textarea>
-        </label>
-        <label class="profile-switch profile-field--wide">
-          <input type="checkbox" name="remoteWork"${checked(profile.company.remoteWork)}>
-          <span><strong>Ofrecemos trabajo remoto</strong><small>Las vacantes pueden realizarse fuera de la oficina.</small></span>
-        </label>
+        <label>Nombre de la empresa<input name="companyName" value="${escapeHtml(profile.company.companyName)}"></label>
+        <label>Sector<input name="sector" value="${escapeHtml(profile.company.sector)}"></label>
+        <label class="profile-field--wide">Descripción<textarea name="companyDescription">${escapeHtml(profile.company.description)}</textarea></label>
+        <label class="profile-field--wide">Tipos de vacantes<textarea name="vacancyTypes">${asLines(profile.company.vacancyTypes)}</textarea></label>
+        <label class="profile-switch profile-field--wide"><input type="checkbox" name="remoteWork"${checked(profile.company.remoteWork)}><span><strong>Ofrecemos trabajo remoto</strong></span></label>
       </div>
     </section>`;
   }
@@ -293,7 +283,7 @@ function collectProfile(form, profile, accountType = profile.accountType) {
       willingToRelocate: Boolean(form.querySelector("[name='willingToRelocate']")?.checked),
       maxDistanceKm: form.querySelector("[name='maxDistanceKm']")?.value ?? profile.jobSeeker.maxDistanceKm
     };
-  } else if (accountType === "recruiter") {
+  } else if (accountType === "employer" || accountType === "recruiter") {
     nextProfile.recruiter = {
       ...profile.recruiter,
       organization: String(formData.get("organization") || ""),

@@ -126,6 +126,15 @@
   max-width: 100%;
 }
 
+.home-title [data-blur-text] {
+  overflow: visible;
+}
+
+.blur-text__word {
+  display: inline-block;
+  will-change: transform, filter, opacity;
+}
+
 .home-title > span:nth-child(2) {
   justify-self: center;
 }
@@ -215,27 +224,6 @@
   width: 56px;
   height: 1px;
   background: var(--home-ink);
-}
-
-.home-cursor-aura {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  width: clamp(180px, 24vw, 360px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(204, 255, 50, 0.45), rgba(48, 37, 255, 0.18) 42%, transparent 72%);
-  filter: blur(10px);
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  transition: opacity 240ms ease;
-  will-change: transform;
-}
-
-.home-cursor-aura.is-visible {
-  opacity: 0.92;
 }
 
 .home-particle-field {
