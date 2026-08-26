@@ -98,6 +98,7 @@ async function handleTranslation(request, response) {
     const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
     const upstream = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
       method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+      signal: AbortSignal.timeout(15000),
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: `Traduce textos de una interfaz de reclutamiento al ${targetName}. Conserva nombres propios, números, símbolos, HTML y siglas. Devuelve únicamente un arreglo JSON de cadenas, en el mismo orden y con exactamente la misma cantidad.` }] },
         contents: [{ role: "user", parts: [{ text: JSON.stringify(texts) }] }],

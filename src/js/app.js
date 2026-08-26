@@ -126,7 +126,7 @@ async function bootstrap() {
   });
 
   shell.setUser(profileService.get());
-  destroyPreferences = createPreferencesController(root);
+  destroyPreferences = createPreferencesController(root, globalThis.localStorage, feedback);
   destroyAssistant = createAiAssistant(root, { role });
 
   window.addEventListener("unhandledrejection", event => {

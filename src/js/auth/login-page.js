@@ -1,4 +1,7 @@
 import { isAuthenticated, login } from "./auth-service.js";
+import { applyStandaloneTranslation } from "../ui/preferences-controller.js";
+
+if (globalThis.document?.body) applyStandaloneTranslation(document.body);
 
 export const DEMO_CREDENTIALS_BY_ROLE = Object.freeze({
   "job-seeker": Object.freeze({ username: "emilys", password: "emilyspass" }),
