@@ -1384,3 +1384,11 @@
 :root[data-theme="dark"] .process-step.is-active p {
   color: rgba(11, 11, 15, 0.68);
 }
+.home-core-object { position:absolute; top:50%; left:50%; width:clamp(190px,28vw,430px); aspect-ratio:1; transform:translate(-50%,-50%); transform-style:preserve-3d; border:1px solid color-mix(in srgb,var(--home-blue) 45%,transparent); border-radius:42% 58% 54% 46%/48% 38% 62% 52%; background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.8),transparent 18%),conic-gradient(from 35deg,var(--home-blue),var(--home-pink),var(--home-lime),var(--home-blue)); opacity:.72; filter:saturate(.9) contrast(1.06); box-shadow:inset -30px -24px 70px rgba(11,11,15,.24),0 45px 100px rgba(48,37,255,.22); animation:home-core-breathe 7s ease-in-out infinite alternate; }
+.home-core-object span,.home-core-object i { position:absolute; inset:10%; border:1px solid rgba(255,255,255,.42); border-radius:55% 45% 38% 62%/46% 56% 44% 54%; transform:translateZ(44px) rotate(18deg); }.home-core-object span:nth-child(2){inset:22%;transform:translateZ(82px) rotate(-28deg);background:rgba(255,255,255,.12)}.home-core-object i{inset:36%;transform:translateZ(120px);background:rgba(255,255,255,.65);filter:blur(2px)}
+.home-particle { opacity:.24; }
+@keyframes home-core-breathe { from{border-radius:42% 58% 54% 46%/48% 38% 62% 52%;transform:translate(-50%,-50%) rotate(-3deg) scale(.96)} to{border-radius:58% 42% 46% 54%/38% 54% 46% 62%;transform:translate(-50%,-50%) rotate(5deg) scale(1.04)} }
+.motion-reduced .home-core-object,.low-performance .home-core-object { animation:none; transform:translate(-50%,-50%); }
+.home-experience::after { position:fixed; inset:0; z-index:40; pointer-events:none; opacity:.045; mix-blend-mode:overlay; content:""; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E"); }
+@media (hover:none),(pointer:coarse){.home-experience::after{display:none}}
+.low-performance .home-experience::after{display:none}

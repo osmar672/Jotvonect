@@ -24,6 +24,7 @@ function addPointerEffects(root, hero) {
 
   const title = hero.querySelector("[data-hero-title]");
   const particles = hero.querySelector("[data-particle-field]");
+  const core = hero.querySelector("[data-hero-core]");
   const aura = hero.querySelector("[data-cursor-aura]");
   const interactiveElements = [...root.querySelectorAll(".home-button")];
   const cleanup = [];
@@ -34,6 +35,8 @@ function addPointerEffects(root, hero) {
     const rotateTitleY = gsap.quickTo(title, "rotationY", { duration: 0.65, ease: "power3.out" });
     const moveParticlesX = gsap.quickTo(particles, "x", { duration: 0.8, ease: "power3.out" });
     const moveParticlesY = gsap.quickTo(particles, "y", { duration: 0.8, ease: "power3.out" });
+    const rotateCoreX = core ? gsap.quickTo(core, "rotationX", { duration: 1.15, ease: "power3.out" }) : null;
+    const rotateCoreY = core ? gsap.quickTo(core, "rotationY", { duration: 1.15, ease: "power3.out" }) : null;
 
     const handleHeroPointer = event => {
       const bounds = hero.getBoundingClientRect();
@@ -46,6 +49,8 @@ function addPointerEffects(root, hero) {
       rotateTitleY(normalizedX * 7);
       moveParticlesX(normalizedX * 42);
       moveParticlesY(normalizedY * 28);
+      rotateCoreX?.(normalizedY * -16);
+      rotateCoreY?.(normalizedX * 22);
       if (aura) gsap.to(aura, { x: localX, y: localY, opacity: 1, duration: 0.34, ease: "power3.out", overwrite: "auto" });
     };
 
@@ -54,6 +59,8 @@ function addPointerEffects(root, hero) {
       rotateTitleY(0);
       moveParticlesX(0);
       moveParticlesY(0);
+      rotateCoreX?.(0);
+      rotateCoreY?.(0);
       if (aura) gsap.to(aura, { opacity: 0, duration: 0.3, overwrite: "auto" });
     };
 
@@ -63,15 +70,22 @@ function addPointerEffects(root, hero) {
     cleanup.push(() => hero.removeEventListener("pointerleave", resetHeroPointer));
   }
 
-  for (const element of interactiveElements) {
-    const handlePointer = event => {
+  const handleMagneticPointer = event => {
+    for (const element of interactiveElements) {
       const bounds = element.getBoundingClientRect();
-      const x = event.clientX - bounds.left - bounds.width / 2;
-      const y = event.clientY - bounds.top - bounds.height / 2;
+      const x = event.clientX - (bounds.left + bounds.width / 2);
+      const y = event.clientY - (bounds.top + bounds.height / 2);
+      const influenceRadius = Math.max(bounds.width, bounds.height) * 0.5 + 90;
+      const distance = Math.hypot(x, y);
+      if (distance > influenceRadius) {
+        gsap.to(element, { x: 0, y: 0, duration: 0.65, ease: "elastic.out(1, 0.45)", overwrite: "auto" });
+        continue;
+      }
+      const strength = 1 - distance / influenceRadius;
 
       gsap.to(element, {
-        x: x * 0.12,
-        y: y * 0.16,
+        x: x * 0.18 * strength,
+        y: y * 0.2 * strength,
         rotationX: 0,
         rotationY: 0,
         scale: 1,
@@ -80,9 +94,10 @@ function addPointerEffects(root, hero) {
         ease: "power2.out",
         overwrite: "auto"
       });
-    };
-
-    const resetPointer = () => {
+    }
+  };
+  const resetMagneticButtons = () => {
+    for (const element of interactiveElements) {
       gsap.to(element, {
         x: 0,
         y: 0,
@@ -93,17 +108,16 @@ function addPointerEffects(root, hero) {
         ease: "elastic.out(1, 0.45)",
         overwrite: "auto"
       });
-    };
-
-    element.addEventListener("pointermove", handlePointer);
-    element.addEventListener("pointerleave", resetPointer);
-    cleanup.push(() => element.removeEventListener("pointermove", handlePointer));
-    cleanup.push(() => element.removeEventListener("pointerleave", resetPointer));
-  }
+    }
+  };
+  root.addEventListener("pointermove", handleMagneticPointer);
+  root.addEventListener("pointerleave", resetMagneticButtons);
+  cleanup.push(() => root.removeEventListener("pointermove", handleMagneticPointer));
+  cleanup.push(() => root.removeEventListener("pointerleave", resetMagneticButtons));
 
   return () => {
     cleanup.forEach(removeListener => removeListener());
-    gsap.killTweensOf([aura, title, particles, ...interactiveElements].filter(Boolean));
+    gsap.killTweensOf([aura, title, particles, core, ...interactiveElements].filter(Boolean));
   };
 }
 
@@ -173,15 +187,12 @@ export function initHomeMotion(root) {
       });
     }
 
-    gsap.to(".home-standards__heading h2", {
+    const standardsHeading = root.querySelector(".home-standards__heading h2");
+    const standardsSection = root.querySelector(".home-standards");
+    if (standardsHeading && standardsSection) gsap.to(standardsHeading, {
       xPercent: -7,
       ease: "none",
-      scrollTrigger: {
-        trigger: ".home-standards",
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1
-      }
+      scrollTrigger: { trigger: standardsSection, start: "top bottom", end: "bottom top", scrub: 1 }
     });
 
     if (finalOrbit) {
@@ -280,7 +291,7 @@ export function initHomeMotion(root) {
 
   const removePointerEffects = addPointerEffects(root, hero);
   let lenis = null;
-  let animationFrame = 0;
+  let lenisTicker = null;
   let refreshFrame = 0;
 
   try {
@@ -292,12 +303,9 @@ export function initHomeMotion(root) {
     });
     lenis.on("scroll", ScrollTrigger.update);
 
-    const updateSmoothScroll = time => {
-      lenis?.raf(time);
-      animationFrame = requestAnimationFrame(updateSmoothScroll);
-    };
-
-    animationFrame = requestAnimationFrame(updateSmoothScroll);
+    lenisTicker = time => lenis?.raf(time * 1000);
+    gsap.ticker.add(lenisTicker);
+    gsap.ticker.lagSmoothing(0);
   } catch {
     lenis = null;
   }
@@ -312,7 +320,7 @@ export function initHomeMotion(root) {
     removeBlurText();
     gsapContext.revert();
     lenis?.destroy();
-    if (animationFrame) cancelAnimationFrame(animationFrame);
+    if (lenisTicker) gsap.ticker.remove(lenisTicker);
     if (refreshFrame) cancelAnimationFrame(refreshFrame);
     root.classList.remove("motion-active");
   };

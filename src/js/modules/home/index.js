@@ -360,7 +360,7 @@ export function buildHomeMarkup() {
         playsinline
         aria-hidden="true"></video>
       <span class="home-cursor-aura" data-cursor-aura aria-hidden="true"></span>
-      <div class="home-particle-field" data-particle-field aria-hidden="true">${buildParticleMarkup()}</div>
+      <div class="home-particle-field" data-particle-field aria-hidden="true"><div class="home-core-object" data-hero-core><span></span><span></span><i></i></div>${buildParticleMarkup()}</div>
       <div class="home-hero__top">
         <p class="home-kicker" data-hero-kicker>TECNOLOGÍA + TALENTO / 2026</p>
         <span class="home-status"><span class="home-status__dot" aria-hidden="true"></span><span data-motion-label>Preparando movimiento</span></span>
@@ -373,8 +373,8 @@ export function buildHomeMarkup() {
       <div class="home-hero__footer" data-hero-footer>
         <p>Una plataforma digital para organizar oportunidades, personas y procesos de empleabilidad desde un solo lugar.</p>
         <div class="home-actions">
-          <button type="button" class="home-button home-button--dark" data-home-target="candidates">Explorar talento <span aria-hidden="true">↗</span></button>
-          <button type="button" class="home-button home-button--ghost" data-home-target="vacancies">Ver vacantes <span aria-hidden="true">→</span></button>
+          <button type="button" class="home-button home-button--dark" data-cursor="Explorar" data-home-target="candidates">Explorar talento <span aria-hidden="true">↗</span></button>
+          <button type="button" class="home-button home-button--ghost" data-cursor="Ver" data-home-target="vacancies">Ver vacantes <span aria-hidden="true">→</span></button>
         </div>
       </div>
       <div class="home-scroll-cue" aria-hidden="true"><span>DESPLÁZATE</span><i></i></div>
@@ -405,7 +405,7 @@ export function buildHomeMarkup() {
       <div class="home-final__orbit" data-final-orbit aria-hidden="true"><span></span><span></span><i></i></div>
       <p>LISTOS PARA CONECTAR</p>
       <h2 id="home-final-title">El próximo gran talento ya está más cerca.</h2>
-      <button type="button" class="home-button home-button--light" data-home-target="candidates">Comenzar ahora <span aria-hidden="true">↗</span></button>
+      <button type="button" class="home-button home-button--light" data-cursor="Entrar" data-home-target="candidates">Comenzar ahora <span aria-hidden="true">↗</span></button>
     </section>
   </div>`;
 }

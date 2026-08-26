@@ -530,22 +530,39 @@ function program(gl, vertexShader, fragmentType, fragmentSource) {
 
 export function createSplashCursor(options = {}) {
   const canvas = document.createElement('canvas');
+  const indicator = document.createElement('div');
   canvas.className = 'splash-cursor';
+  indicator.className = 'cursor-state';
+  indicator.setAttribute('aria-hidden', 'true');
   canvas.setAttribute('aria-hidden', 'true');
   canvas.style.cssText = [
     'position:fixed', 'inset:0', 'width:100vw', 'height:100vh',
     'display:block', 'pointer-events:none', 'z-index:50', 'opacity:1'
   ].join(';');
   document.body.appendChild(canvas);
+  document.body.appendChild(indicator);
 
   if (document.documentElement.classList.contains('low-performance') || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
     canvas.remove();
+    indicator.remove();
     return () => {};
   }
 
+  const moveIndicator = event => {
+    indicator.style.transform = `translate3d(${event.clientX}px,${event.clientY}px,0)`;
+    const target = event.target?.closest?.('[data-cursor]');
+    indicator.textContent = target?.dataset?.cursor || '';
+    indicator.classList.toggle('is-active', Boolean(target));
+    canvas.classList.toggle('is-over-control', Boolean(target));
+    canvas.classList.toggle('is-hidden', Boolean(event.target?.closest?.('input,textarea,select')));
+  };
+  document.addEventListener('pointermove', moveIndicator, { passive: true });
+
   const destroyFluid = createFluidCanvas(canvas, options);
   return () => {
+    document.removeEventListener('pointermove', moveIndicator);
     destroyFluid();
     canvas.remove();
+    indicator.remove();
   };
 }
