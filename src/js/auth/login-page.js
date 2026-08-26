@@ -1,4 +1,5 @@
-<<<<<<< Updated upstream
+ feature-yubran
+ Updated upstream
 import { login, isAuthenticated } from "./auth-service.js";
 if (isAuthenticated()) window.location.replace("index.html");
 const root = document.querySelector("#login-root");
@@ -28,7 +29,7 @@ form.addEventListener("submit", async e => {
   catch(error){status.textContent=error.message||"No se pudo iniciar sesión."; status.className="login-status is-error";}
   finally {button.disabled=false;button.textContent="Iniciar sesión";}
 });
-=======
+
 import { isAuthenticated, login } from './auth-service.js';
 import {
   authenticateWithFace,
@@ -88,19 +89,55 @@ if (isAuthenticated()) {
     passwordInput.value = credentials.password;
     clearMessages();
     status.textContent = 'Datos completados. Puedes iniciar sesión.';
+
+import { isAuthenticated, login } from "./auth-service.js";
+
+export const DEMO_CREDENTIALS_BY_ROLE = Object.freeze({
+  "job-seeker": Object.freeze({ username: "emilys", password: "emilyspass" }),
+  employer: Object.freeze({ username: "emilys", password: "emilyspass" }),
+  admin: Object.freeze({ username: "emilys", password: "emilyspass" })
+});
+
+if (isAuthenticated()) {
+  window.location.replace("index.html");
+} else {
+  const form = document.querySelector("#login-form");
+  const usernameInput = document.querySelector("#username");
+  const passwordInput = document.querySelector("#password");
+  const submitButton = document.querySelector("#submit-login");
+  const demoButton = document.querySelector("#fill-demo");
+  const status = document.querySelector("#login-status");
+
+  const getSelectedRole = () => form.querySelector("[name='accountType']:checked")?.value || "job-seeker";
+
+  function fillCredentialsForSelectedRole({ focusPassword = false } = {}) {
+    const credentials = DEMO_CREDENTIALS_BY_ROLE[getSelectedRole()] || DEMO_CREDENTIALS_BY_ROLE["job-seeker"];
+    usernameInput.value = credentials.username;
+    passwordInput.value = credentials.password;
+    clearMessages();
+    status.textContent = "Datos completados. Puedes iniciar sesión.";
+ main
     if (focusPassword) passwordInput.focus();
   }
 
   function clearMessages() {
+ feature-yubran
     status.textContent = '';
     status.className = 'login-status';
     document.querySelector('#username-error').textContent = '';
     document.querySelector('#password-error').textContent = '';
+
+    status.textContent = "";
+    status.className = "login-status";
+    document.querySelector("#username-error").textContent = "";
+    document.querySelector("#password-error").textContent = "";
+ main
   }
 
   function validate() {
     clearMessages();
     let valid = true;
+ feature-yubran
     if (!usernameInput.value.trim()) {
       document.querySelector('#username-error').textContent = 'El usuario es obligatorio.';
       valid = false;
@@ -109,12 +146,26 @@ if (isAuthenticated()) {
       document.querySelector('#password-error').textContent = 'La contraseña es obligatoria.';
       valid = false;
     }
+
+
+    if (!usernameInput.value.trim()) {
+      document.querySelector("#username-error").textContent = "El usuario es obligatorio.";
+      valid = false;
+    }
+
+    if (!passwordInput.value) {
+      document.querySelector("#password-error").textContent = "La contraseña es obligatoria.";
+      valid = false;
+    }
+
+ main
     return valid;
   }
 
   function setBusy(busy) {
     submitButton.disabled = busy;
     demoButton.disabled = busy;
+ feature-yubran
     faceLoginButton.disabled = busy;
     voiceLoginButton.disabled = busy;
     submitButton.textContent = busy ? 'Iniciando sesión…' : 'Iniciar sesión';
@@ -277,10 +328,28 @@ if (isAuthenticated()) {
   fillCredentialsForSelectedRole();
 
   form.addEventListener('submit', async event => {
+
+    submitButton.textContent = busy ? "Iniciando sesión…" : "Iniciar sesión";
+    form.setAttribute("aria-busy", String(busy));
+  }
+
+  demoButton.addEventListener("click", () => {
+    fillCredentialsForSelectedRole({ focusPassword: true });
+  });
+
+  for (const roleInput of form.querySelectorAll("[name='accountType']")) {
+    roleInput.addEventListener("click", () => fillCredentialsForSelectedRole());
+  }
+
+  fillCredentialsForSelectedRole();
+
+  form.addEventListener("submit", async event => {
+ main
     event.preventDefault();
     if (!validate()) return;
 
     setBusy(true);
+ feature-yubran
     status.textContent = 'Validando credenciales…';
 
     try {
@@ -346,8 +415,23 @@ if (isAuthenticated()) {
     } catch (error) {
       status.textContent = error.message || 'No se pudo iniciar sesión.';
       status.className = 'login-status is-error';
+
+    status.textContent = "Validando credenciales…";
+
+    try {
+      await login(usernameInput.value, passwordInput.value, globalThis.fetch, getSelectedRole());
+      status.textContent = "Sesión iniciada. Abriendo el panel…";
+      status.className = "login-status is-success";
+      window.location.replace("index.html");
+    } catch (error) {
+      status.textContent = error.message || "No se pudo iniciar sesión.";
+      status.className = "login-status is-error";
+ main
       setBusy(false);
     }
   });
 }
->>>>>>> Stashed changes
+ feature-yubran
+ Stashed changes
+
+ main

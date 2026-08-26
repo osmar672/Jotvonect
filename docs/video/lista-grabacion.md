@@ -3,8 +3,19 @@
 - [ ] Resolución legible.
 - [ ] Duración dentro del requisito de la asignatura.
 - [ ] Login demostrado.
+- [ ] Inicio corporativo y animaciones demostrados.
+- [ ] Puntero interactivo, botones magnéticos y movimiento con scroll demostrados.
+- [ ] Explorador de estándares demostrado con mouse y teclado; confirmar que no existe ninguna franja de indicadores.
+- [ ] Progreso de estándares y narrativa de scroll demostrados.
+- [ ] Menú desplegable y cierre con teclado demostrados.
+- [ ] Vista previa visual de cada destino del menú demostrada.
+- [ ] Tema claro/oscuro y persistencia demostrados.
+- [ ] Perfil de los tres tipos de cuenta y persistencia demostrados.
+- [ ] Porcentaje y vista previa dinámica del perfil demostrados.
+- [ ] Cierre de sesión dentro del perfil demostrado.
 - [ ] Seis módulos demostrados.
 - [ ] CRUD y feedback demostrados.
+- [ ] Tarjetas/lista, ordenamiento, skeletons y formulario lateral demostrados.
 - [ ] Responsive demostrado.
 - [ ] Consola revisada.
 - [ ] Repositorio mostrado.

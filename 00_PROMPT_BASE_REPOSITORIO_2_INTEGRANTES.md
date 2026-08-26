@@ -104,6 +104,10 @@ El objeto services tendrá:
     services.auth.isAuthenticated()
     services.auth.logout()
 
+    services.profile.get()
+    services.profile.save(profile)
+    services.profile.reset()
+
 confirmDelete debe devolver Promise<boolean>.
 
 El servicio de autenticación exportará:
@@ -123,13 +127,19 @@ La interfaz principal exportará:
       root,
       modules,
       onSelect,
-      onLogout
+      onLogout,
+      profileService,
+      onProfileSaved
     })
 
 renderShell debe devolver:
 
     {
-      contentContainer
+      contentContainer,
+      setActive,
+      setUser,
+      closeMenu,
+      destroy
     }
 
 Ninguno de los dos integrantes puede modificar services.contract.js después de fusionar la base.
@@ -152,7 +162,7 @@ Documenta lo siguiente en docs/arquitectura/propiedad-archivos.md:
 | Responsable | Puede modificar exclusivamente |
 |---|---|
 | Integrante 1 | login.html, src/js/auth/**, src/js/modules/candidates/**, src/js/modules/interviews/**, src/js/modules/tasks/**, src/css/auth.css, src/css/modules/candidates.css, src/css/modules/interviews.css, src/css/modules/tasks.css, docs/planificacion/**, docs/infografia/**, docs/reflexion/**, docs/notebooklm/integrante-1/** y docs/pruebas/integrante-1.md |
-| Integrante 2 | index.html, README.md, src/js/app.js, src/js/config/**, src/js/core/**, src/js/ui/**, src/js/modules/vacancies/**, src/js/modules/companies/**, src/js/modules/applications/**, src/css/base.css, src/css/layout.css, src/css/responsive.css, src/css/components/feedback.css, src/css/modules/vacancies.css, src/css/modules/companies.css, src/css/modules/applications.css, docs/video/**, docs/bitacora/**, docs/integracion/**, docs/notebooklm/integrante-2/** y docs/pruebas/integrante-2.md |
+| Integrante 2 | index.html, README.md, src/js/app.js, src/js/config/**, src/js/core/**, src/js/ui/**, src/js/profile/**, src/js/animations/**, src/js/modules/home/**, src/js/modules/vacancies/**, src/js/modules/companies/**, src/js/modules/applications/**, src/css/base.css, src/css/layout.css, src/css/responsive.css, src/css/components/feedback.css, src/css/components/profile-panel.css, src/css/modules/home.css, src/css/modules/vacancies.css, src/css/modules/companies.css, src/css/modules/applications.css, docs/video/**, docs/bitacora/**, docs/integracion/**, docs/notebooklm/integrante-2/** y docs/pruebas/integrante-2.md |
 | Congelados | src/js/contracts/** y docs/arquitectura/propiedad-archivos.md |
 
 ## Reglas de integración
@@ -191,4 +201,3 @@ Commit:
     chore: crear base de JobConnect para dos integrantes
 
 Detente después de preparar la base. No desarrolles funciones asignadas a los integrantes.
-

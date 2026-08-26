@@ -127,6 +127,7 @@
     transition: none;
   }
 }
+ feature-yubran
 
 /* Seguridad de navegación: un loader oculto nunca puede interceptar el login. */
 .pixel-swap-loader[aria-hidden="true"] {
@@ -134,3 +135,5 @@
   visibility: hidden;
   pointer-events: none;
 }
+
+ main

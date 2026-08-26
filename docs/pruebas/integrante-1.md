@@ -1,13 +1,19 @@
-# Pruebas Integrante 1
-- [x] Login correcto/incorrecto: flujo implementado.
-- [x] Persistencia del token.
-- [x] Protección sin token.
-- [x] Logout.
-- [x] Cinco operaciones de candidatos.
-- [x] Cuatro operaciones de entrevistas.
-- [x] Cuatro operaciones de tareas.
-- [x] Validación de formularios.
-- [x] Manejo de errores de red.
-- [x] Estado local tras mutaciones.
-- [x] Vista responsive.
-- [x] Solicitudes de integración: ninguna pendiente conocida.
+# Evidencia de pruebas - Integrante 1
+
+- [x] Login correcto con respuesta simulada de DummyJSON.
+- [x] Error de credenciales controlado.
+- [x] Persistencia del token y usuario.
+- [x] Protección sin token y cierre de sesión.
+- [x] Identidad inicial del perfil vinculada con la cuenta autenticada.
+- [x] GET, POST, PUT, PATCH y DELETE de Candidatos.
+- [x] GET, POST, PATCH y DELETE de Entrevistas.
+- [x] GET, POST, PATCH y DELETE de Tareas.
+- [x] Formularios conectados sin errores no controlados.
+- [x] Estado local después de las mutaciones.
+- [x] Sintaxis de los archivos asignados.
+
+Comando de evidencia:
+
+```bash
+npm test
+```

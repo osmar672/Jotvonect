@@ -1,8 +1,11 @@
-# Propiedad de archivos
-| Responsable | Áreas |
-|---|---|
-| Integrante 1 | auth, candidates, interviews, tasks, planificación, infografía, reflexión y pruebas I1 |
-| Integrante 2 | index, app, core, ui, config, vacancies, companies, applications, CSS global, video, bitácora, integración y pruebas I2 |
-| Congelados | src/js/contracts/** y este documento |
+# Propiedad de archivos para dos integrantes
 
-Cada archivo tiene un único responsable. Los módulos se comunican mediante `mount/unmount` y `services`.
+| Responsable | Archivos o áreas completas |
+|---|---|
+| Integrante 1 | `src/js/auth/**`, Candidatos, Entrevistas, Tareas, planificación, bitácora y reflexión |
+| Integrante 2 | `server.js`, `app.js`, `ui/**`, `profile/**`, `animations/**`, Inicio, `config/**`, `api-client.js`, Vacantes, Empresas, Postulaciones, CSS, README, video e integración |
+| Compartidos después de revisión | `src/js/core/crud-module.js`, `src/js/contracts/**`, `package.json`, `package-lock.json`, `tests/**` |
+
+Los archivos compartidos se consideran congelados mientras cada integrante desarrolla sus módulos. Cualquier cambio posterior debe realizarse en una rama de integración y revisarse mediante Pull Request.
+
+Cada módulo conserva una responsabilidad completa y se conecta mediante `moduleMeta`, `moduleConfig`, `mount`, `unmount` y los servicios comunes.

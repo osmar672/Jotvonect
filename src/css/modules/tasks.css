@@ -1,2 +1,1 @@
-.module--tasks { max-width:1100px; margin:auto; }
-.module--tasks .entity-card { border-left:4px solid var(--accent); }
+.module--tasks { --module-accent: #15803d; }
