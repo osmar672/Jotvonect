@@ -50,11 +50,74 @@
         <input id="password" name="password" type="password" autocomplete="current-password" required>
         <small id="password-error" class="field-error"></small>
 
+ feature-yubran
+ Updated upstream
+        <button id="login-submit" class="auth-submit" type="submit">
+          <span class="auth-submit__label">Entrar</span>
+          <span class="auth-submit__loading" hidden>Iniciando sesión…</span>
+        </button>
+      </form>
+
+      <p class="auth-card__footer">JobConnect · Plataforma de empleabilidad</p>
+    </section>
+  </main>
+
+
+        <label class="face-remember">
+          <input id="remember-face" type="checkbox">
+          <span>Activar acceso con mi cara en este dispositivo</span>
+        </label>
+        <label class="face-remember">
+          <input id="remember-voice" type="checkbox">
+          <span>Activar acceso con mi voz en este dispositivo</span>
+        </label>
+
+        <button id="submit-login" class="btn btn--primary" type="submit">Iniciar sesión</button>
+        <button id="face-login" class="btn face-login-btn" type="button">Acceder con mi cara</button>
+        <button id="voice-login" class="btn voice-login-btn" type="button">Acceder con mi voz</button>
+        <button id="fill-demo" class="btn" type="button">Completar datos de acceso</button>
+        <p id="login-status" class="login-status" role="status" aria-live="polite"></p>
+      </form>
+
+      <div id="voice-modal" class="face-modal voice-modal" hidden aria-hidden="true">
+        <div class="face-modal__backdrop" data-voice-close></div>
+        <section class="face-modal__panel" role="dialog" aria-modal="true" aria-labelledby="voice-modal-title">
+          <button class="face-modal__close" type="button" data-voice-close aria-label="Cerrar">×</button>
+          <div class="voice-pulse" aria-hidden="true">◉</div>
+          <p class="eyebrow">ACCESO BIOMÉTRICO</p>
+          <h3 id="voice-modal-title">Habla durante unos segundos</h3>
+          <p id="voice-status">Estamos preparando el reconocimiento de voz…</p>
+          <div class="voice-visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <p class="voice-phrase">Di con naturalidad: <strong>“Mi voz es mi contraseña”</strong></p>
+          <button id="voice-capture" class="btn btn--primary" type="button">Comenzar grabación</button>
+          <p class="face-modal__note">La huella de voz se procesa en el dispositivo. El primer uso puede tardar porque el modelo de IA debe cargarse.</p>
+        </section>
+      </div>
+
+      <div id="face-modal" class="face-modal" hidden aria-hidden="true">
+        <div class="face-modal__backdrop" data-face-close></div>
+        <section class="face-modal__panel" role="dialog" aria-modal="true" aria-labelledby="face-modal-title">
+          <button class="face-modal__close" type="button" data-face-close aria-label="Cerrar">×</button>
+          <div class="face-modal__badge" aria-hidden="true">◉</div>
+          <p class="eyebrow">ACCESO BIOMÉTRICO</p>
+          <h3 id="face-modal-title">Mira a la cámara</h3>
+          <p id="face-status">Estamos preparando el reconocimiento facial…</p>
+          <div class="face-camera-frame">
+            <video id="face-video" autoplay playsinline muted></video>
+            <div class="face-camera-frame__scan"></div>
+          </div>
+          <button id="face-capture" class="btn btn--primary" type="button">Reconocer rostro</button>
+          <p class="face-modal__note">El reconocimiento se procesa en este dispositivo. Para mayor seguridad, conserva la contraseña como método alternativo.</p>
+        </section>
+      </div>
+
+
         <button id="submit-login" class="btn btn--primary" type="submit">Iniciar sesión</button>
         <button id="fill-demo" class="btn" type="button">Completar datos de acceso</button>
         <p id="login-status" class="login-status" role="status" aria-live="polite"></p>
       </form>
 
+ main
       <div class="auth-demo">
         <strong>Cuenta pública de DummyJSON</strong>
         <span>Usuario: <code>emilys</code></span>
@@ -62,6 +125,10 @@
       </div>
     </main>
   </div>
+ feature-yubran
+ Stashed changes
+
+ main
   <script type="module" src="src/js/auth/login-page.js"></script>
 </body>
 </html>

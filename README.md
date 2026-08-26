@@ -1,3 +1,9 @@
+ feature-yubran
+ Updated upstream
+# Jotvonect
+
+
+ main
 # JobConnect
 
 JobConnect es una empresa digital y una aplicación web para administrar procesos de empleabilidad. Su experiencia de Inicio presenta la propuesta de valor de la organización y conecta seis módulos de gestión con la API pública de DummyJSON mediante `fetch` y autenticación con token. La navegación se abre bajo demanda desde el encabezado y cada usuario dispone de un perfil configurable según sea persona candidata, reclutador o empresa.
@@ -257,3 +263,13 @@ npm install motion
 ```
 
 La implementación está en `src/js/animations/blur-text.js` y se inicializa desde `src/js/animations/home-motion.js`.
+ feature-yubran
+
+## Acceso biométrico por voz
+
+El login incluye acceso mediante reconocimiento del hablante usando `@huggingface/transformers` y el modelo `Xenova/wavlm-base-plus-sv`. En este proyecto vanilla JS, el motor se carga como ES module desde CDN para no introducir imports bare en el navegador. El primer uso descarga y cachea el modelo; después se procesa la huella de voz localmente.
+
+La opción se encuentra en `login.html` como **Acceder con mi voz**. Para registrar la voz, inicia sesión con contraseña y marca **Activar acceso con mi voz en este dispositivo**.
+ Stashed changes
+
+ main
