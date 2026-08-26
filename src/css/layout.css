@@ -1295,3 +1295,8 @@ body.has-entity-editor {
 :root[data-theme="dark"] .form-grid > label:not(.form-checkbox) {
   color: var(--text);
 }
+.page-curtain { position:fixed; inset:0; z-index:120; display:grid; grid-template-columns:repeat(4,1fr); pointer-events:none; visibility:hidden; }
+.page-curtain.is-transitioning { visibility:visible; }
+.page-curtain span { background:var(--accent); transform:scaleY(0); }
+.page-curtain span:nth-child(2),.page-curtain span:nth-child(4) { background:var(--surface-soft); }
+.low-performance .page-curtain { display:none!important; }

@@ -16,6 +16,17 @@ export function createInterfaceMotion(root = globalThis.document?.querySelector?
   const reducedMotion = prefersReducedMotion();
   const activeTweens = new Set();
   const cleanupCallbacks = [];
+  let curtain = null;
+
+  function getCurtain() {
+    if (curtain || !root || typeof globalThis.document?.createElement !== "function") return curtain;
+    curtain = globalThis.document.createElement("div");
+    curtain.className = "page-curtain";
+    curtain.setAttribute("aria-hidden", "true");
+    curtain.innerHTML = '<span></span><span></span><span></span><span></span>';
+    root.append(curtain);
+    return curtain;
+  }
 
   function remember(tween) {
     if (!tween) return tween;
@@ -29,20 +40,13 @@ export function createInterfaceMotion(root = globalThis.document?.querySelector?
     if (reducedMotion || !targets.length) return Promise.resolve();
 
     return new Promise(resolve => {
-      const tween = gsap.to(targets, {
-        opacity: 0,
-        y: -18,
-        filter: "blur(7px)",
-        stagger: 0.025,
-        duration: 0.22,
-        ease: "power2.in",
-        overwrite: "auto",
-        onComplete: () => {
-          activeTweens.delete(tween);
-          resolve();
-        }
-      });
-      activeTweens.add(tween);
+      const overlay = getCurtain();
+      const layers = asElements(overlay?.children);
+      overlay?.classList.add("is-transitioning");
+      const timeline = gsap.timeline({ onComplete: () => { activeTweens.delete(timeline); resolve(); } });
+      timeline.to(targets, { opacity: 0, y: -16, filter: "blur(6px)", stagger: 0.02, duration: 0.18, ease: "power2.in" }, 0);
+      timeline.fromTo(layers, { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 0.42, stagger: 0.045, ease: "power4.inOut" }, 0.04);
+      activeTweens.add(timeline);
     });
   }
 
@@ -51,7 +55,10 @@ export function createInterfaceMotion(root = globalThis.document?.querySelector?
     if (reducedMotion || !targets.length) return Promise.resolve();
 
     return new Promise(resolve => {
-      const tween = gsap.fromTo(targets, {
+      const overlay = getCurtain();
+      const layers = asElements(overlay?.children);
+      const timeline = gsap.timeline({ onComplete: () => { overlay?.classList.remove("is-transitioning"); activeTweens.delete(timeline); resolve(); } });
+      timeline.fromTo(targets, {
         opacity: 0,
         y: 30,
         filter: "blur(10px)",
@@ -65,12 +72,9 @@ export function createInterfaceMotion(root = globalThis.document?.querySelector?
         duration: 0.58,
         ease: "power4.out",
         clearProps: "filter,clipPath,transform,opacity",
-        onComplete: () => {
-          activeTweens.delete(tween);
-          resolve();
-        }
-      });
-      activeTweens.add(tween);
+      }, 0.12);
+      timeline.to(layers, { scaleY: 0, transformOrigin: "top", duration: 0.46, stagger: 0.045, ease: "power4.inOut" }, 0);
+      activeTweens.add(timeline);
     });
   }
 
@@ -327,6 +331,8 @@ export function createInterfaceMotion(root = globalThis.document?.querySelector?
     cleanupCallbacks.forEach(cleanup => cleanup());
     activeTweens.forEach(tween => tween.kill?.());
     activeTweens.clear();
+    curtain?.remove();
+    curtain = null;
   }
 
   return Object.freeze({
