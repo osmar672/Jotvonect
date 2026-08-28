@@ -144,10 +144,7 @@ export function initHomeMotion(root) {
 
   const hero = root.querySelector(".home-hero");
   const particleField = root.querySelector("[data-particle-field]");
-  const portal = root.querySelector("[data-portal]");
   const finalOrbit = root.querySelector("[data-final-orbit]");
-  const processStory = root.querySelector("[data-process-story]");
-  const processSteps = [...root.querySelectorAll("[data-process-step]")];
   const revealTargets = [...root.querySelectorAll("[data-reveal-section]")];
   const observedTweens = [];
 
@@ -158,24 +155,6 @@ export function initHomeMotion(root) {
       .from("[data-particle-field]", { opacity: 0, scale: 0.74, y: 80, duration: 1.1 }, "-=0.18")
       .from("[data-hero-footer]", { opacity: 0, y: 34, duration: 0.7 }, "-=0.6")
       .from(".home-scroll-cue", { opacity: 0, x: -18, duration: 0.45 }, "-=0.3");
-
-    if (portal) {
-      gsap.to(portal, { rotation: 360, duration: 34, repeat: -1, ease: "none" });
-      gsap.fromTo(portal,
-        { scale: 0.48, opacity: 0.15 },
-        {
-          scale: 1.18,
-          opacity: 0.9,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".home-story",
-            start: "top 85%",
-            end: "bottom 15%",
-            scrub: 0.8
-          }
-        }
-      );
-    }
 
     if (particleField) {
       gsap.to(particleField, {
@@ -213,28 +192,6 @@ export function initHomeMotion(root) {
       );
     }
 
-    if (processStory && processSteps.length) {
-      for (const [index, step] of processSteps.entries()) {
-        ScrollTrigger.create({
-          trigger: step,
-          start: "top 58%",
-          end: "bottom 42%",
-          onEnter: () => processStory.dispatchEvent(new globalThis.CustomEvent("jobconnect:process-change", { detail: { index } })),
-          onEnterBack: () => processStory.dispatchEvent(new globalThis.CustomEvent("jobconnect:process-change", { detail: { index } }))
-        });
-      }
-
-      gsap.to(".process-stage__visual", {
-        rotation: 150,
-        ease: "none",
-        scrollTrigger: {
-          trigger: processStory,
-          start: "top 70%",
-          end: "bottom 30%",
-          scrub: 0.8
-        }
-      });
-    }
   }, root);
 
   const revealObserver = typeof IntersectionObserver === "function"

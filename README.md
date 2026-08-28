@@ -13,7 +13,7 @@ Las versiones exactas de las dependencias quedan registradas en `package-lock.js
 
 ## Ejecución
 
-1. Abre una terminal dentro de la carpeta del proyecto.
+1. Abre una terminal dentro de la carpeta `Jotvonect` (la que contiene `package.json` y `server.js`). Si abriste la carpeta ZIP superior, entra primero con `cd Jotvonect`.
 2. Instala las bibliotecas declaradas:
 
    ```bash
@@ -37,6 +37,8 @@ Para usar otro puerto:
 ```bash
 JOBCONNECT_PORT=8080 npm start
 ```
+
+Si el navegador indica que no puede conectarse, mantén esa terminal abierta y confirma primero `http://127.0.0.1:3000/health`. Debe devolver un JSON con `"status":"ok"`. No abras `login.html` directamente con `file://`, porque los módulos ES y las rutas `/api/*` necesitan el servidor Node.
 
 En PowerShell:
 
@@ -209,10 +211,22 @@ El chat “Conecta” usa la API real de Gemini desde el servidor. Crea una clav
 GEMINI_API_KEY="tu_clave" npm start
 ```
 
-Opcionalmente puedes cambiar el modelo (por defecto `gemini-2.5-flash`):
+Opcionalmente puedes cambiar el modelo (por defecto `gemini-3.6-flash`):
 
 ```bash
-GEMINI_API_KEY="tu_clave" GEMINI_MODEL="gemini-2.5-flash" npm start
+GEMINI_API_KEY="tu_clave" GEMINI_MODEL="gemini-3.6-flash" npm start
+```
+
+Si el modelo principal está temporalmente saturado, el servidor prueba modelos alternativos antes de activar el respaldo local. Puedes configurar el orden con una lista separada por comas:
+
+```bash
+GEMINI_FALLBACK_MODELS="gemini-3.5-flash-lite,gemini-flash-lite-latest" npm start
+```
+
+El modelo de traducción se configura por separado para evitar que un modelo del asistente no compatible produzca errores HTTP 405:
+
+```bash
+GEMINI_TRANSLATION_MODEL="gemini-3.6-flash" npm start
 ```
 
 La clave se lee exclusivamente en `server.js`; nunca debe guardarse en Git ni enviarse al frontend.

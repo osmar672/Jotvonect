@@ -57,7 +57,7 @@ test("el servidor Node devuelve errores controlados", async t => {
   assert.equal(disallowedMethod.status, 405);
 });
 
-test("el endpoint del asistente protege la configuración de Gemini", async t => {
+test("el asistente conserva funcionalidad local cuando Gemini no está configurado", async t => {
   const previousKeys = { GEMINI_API_KEY: process.env.GEMINI_API_KEY, GOOGLE_API_KEY: process.env.GOOGLE_API_KEY, API_KEY: process.env.API_KEY };
   delete process.env.GEMINI_API_KEY;
   delete process.env.GOOGLE_API_KEY;
@@ -68,6 +68,22 @@ test("el endpoint del asistente protege la configuración de Gemini", async t =>
     return new Promise(resolve => server.close(resolve));
   });
   const response = await fetch(`${baseUrl}/api/assistant`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ role: "job-seeker", messages: [{ role: "user", text: "Hola" }] }) });
-  assert.equal(response.status, 503);
-  assert.match((await response.json()).error, /GEMINI_API_KEY/);
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.equal(payload.fallback, true);
+  assert.equal(payload.model, "jobconnect-local");
+  assert.match(payload.answer, /Gemini|contexto|JobConnect/i);
+
+  const contextualResponse = await fetch(`${baseUrl}/api/assistant`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ role: "job-seeker", language: "es", messages: [{ role: "user", text: "Quiero postularme como diseñador" }, { role: "model", text: "¿Qué experiencia tienes?" }, { role: "user", text: "Tengo tres años, ¿qué recomiendas según lo que te acabo de decir?" }] }) });
+  const contextualPayload = await contextualResponse.json();
+  assert.equal(contextualPayload.fallback, true);
+  assert.match(contextualPayload.answer, /mensaje anterior|diseñador/i);
+});
+
+test("el servidor permite solicitudes API desde Live Server local", async t => {
+  const { server, baseUrl } = await startServer();
+  t.after(() => new Promise(resolve => server.close(resolve)));
+  const response = await fetch(`${baseUrl}/api/assistant`, { method: "OPTIONS", headers: { Origin: "http://127.0.0.1:5500" } });
+  assert.equal(response.status, 204);
+  assert.equal(response.headers.get("access-control-allow-origin"), "http://127.0.0.1:5500");
 });

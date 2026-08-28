@@ -1,3 +1,5 @@
+import { createLayout } from "../../../../node_modules/animejs/dist/modules/index.js";
+
 export const moduleMeta = Object.freeze({
   id: "home",
   label: "Inicio",
@@ -57,10 +59,10 @@ const standards = Object.freeze([
 ]);
 
 const processSteps = Object.freeze([
-  { number: "01", title: "Entender", text: "Analizamos la necesidad, el usuario y el resultado esperado.", signal: "ESCUCHAR" },
-  { number: "02", title: "Diseñar", text: "Definimos componentes, contratos y flujos antes de integrar.", signal: "ORDENAR" },
-  { number: "03", title: "Construir", text: "Implementamos piezas legibles, enfocadas y reutilizables.", signal: "CONECTAR" },
-  { number: "04", title: "Validar", text: "Probamos rutas, estados, accesibilidad y comportamiento completo.", signal: "COMPROBAR" }
+  { number: "01", title: "Entender", text: "Analizamos la necesidad, el usuario y el resultado esperado.", signal: "ESCUCHAR", details: ["Entrevistar a las personas involucradas", "Identificar barreras y necesidades reales", "Definir objetivos y criterios de éxito"], result: "Resultado: un problema claramente definido y medible." },
+  { number: "02", title: "Diseñar", text: "Definimos componentes, contratos y flujos antes de integrar.", signal: "ORDENAR", details: ["Organizar la arquitectura de información", "Prototipar recorridos y estados de interfaz", "Revisar accesibilidad antes de construir"], result: "Resultado: una solución coherente, usable y lista para implementar." },
+  { number: "03", title: "Construir", text: "Implementamos piezas legibles, enfocadas y reutilizables.", signal: "CONECTAR", details: ["Crear módulos pequeños y mantenibles", "Integrar datos con manejo controlado de errores", "Optimizar rendimiento en distintos dispositivos"], result: "Resultado: una experiencia funcional que puede evolucionar sin duplicación." },
+  { number: "04", title: "Validar", text: "Probamos rutas, estados, accesibilidad y comportamiento completo.", signal: "COMPROBAR", details: ["Ejecutar pruebas funcionales y de roles", "Revisar teclado, contraste y movimiento reducido", "Documentar hallazgos y aplicar mejoras"], result: "Resultado: una entrega verificable, inclusiva y preparada para producción." }
 ]);
 
 function buildAnimatedWords(value) {
@@ -132,23 +134,17 @@ function buildStandardsMarkup() {
 
 function buildProcessMarkup() {
   const steps = processSteps.map((step, index) => `<li>
-    <button class="process-step${index === 0 ? " is-active" : ""}" type="button" data-process-step data-process-index="${index}" aria-current="${index === 0 ? "step" : "false"}">
-      <span>${step.number}</span>
-      <strong>${step.title}</strong>
+    <button class="process-step" type="button" data-process-step data-process-index="${index}" data-layout-id="process-${index}" data-duration="${650 + index * 100}" aria-haspopup="dialog">
+      <span data-layout-id="process-${index}-number">${step.number}</span>
+      <strong data-layout-id="process-${index}-title">${step.title}</strong>
       <p>${step.text}</p>
+      <div class="process-step__details"><small>${step.signal}</small><ul>${step.details.map(detail => `<li>${detail}</li>`).join("")}</ul><b>${step.result}</b></div>
       <i aria-hidden="true">↗</i>
     </button>
   </li>`).join("");
-  const initial = processSteps[0];
 
-  return `<div class="process-story" data-process-story data-reveal-item>
-    <aside class="process-stage" data-process-stage data-process-active="0" aria-live="polite">
-      <div class="process-stage__top"><span>ETAPA <b data-process-number>${initial.number}</b></span><i data-process-signal>${initial.signal}</i></div>
-      <div class="process-stage__visual" aria-hidden="true"><span></span><span></span><i></i></div>
-      <div class="process-stage__content"><strong data-process-title>${initial.title}</strong><p data-process-text>${initial.text}</p></div>
-      <div class="process-stage__progress" aria-hidden="true"><i data-process-progress style="width:25%"></i></div>
-    </aside>
-    <ol class="process-list">${steps}</ol>
+  return `<div class="process-story process-layout-grid" data-process-story data-reveal-item>
+    <ol class="process-list" aria-label="Etapas de trabajo">${steps}</ol>
   </div>`;
 }
 
@@ -272,21 +268,25 @@ function setupProcessExplorer(container) {
   if (!story) return () => {};
 
   const steps = [...story.querySelectorAll("[data-process-step]")];
-  const stage = story.querySelector("[data-process-stage]");
-  const number = story.querySelector("[data-process-number]");
-  const signal = story.querySelector("[data-process-signal]");
-  const title = story.querySelector("[data-process-title]");
-  const text = story.querySelector("[data-process-text]");
-  const progress = story.querySelector("[data-process-progress]");
+  if (!steps.length || typeof document?.createElement !== "function") return () => {};
+  const dialog = document.createElement("dialog");
+  dialog.id = "process-layout-dialog";
+  dialog.className = "process-layout-dialog";
+  dialog.setAttribute("aria-label", "Detalle de la etapa");
+  document.body.append(dialog);
+  const modalLayout = createLayout(dialog, {
+    children: [".process-step", ".process-step > span", ".process-step > strong", ".process-step > p", ".process-step__details", ".process-step__details li", ".process-step i"],
+    properties: ["--overlay-alpha"]
+  });
   let activeIndex = 0;
+  let openStep = null;
+
+  const reducedMotion = () => document.documentElement.classList.contains("low-performance") || (globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false);
 
   function selectStep(index, { focus = false } = {}) {
     const item = processSteps[index];
     const selectedStep = steps[index];
-    if (!item || !selectedStep || !stage || !number || !signal || !title || !text || !progress || index === activeIndex) {
-      if (focus) selectedStep?.focus?.();
-      return;
-    }
+    if (!item || !selectedStep) return;
 
     activeIndex = index;
     steps.forEach((step, stepIndex) => {
@@ -294,33 +294,51 @@ function setupProcessExplorer(container) {
       step.classList.toggle("is-active", isActive);
       step.setAttribute("aria-current", isActive ? "step" : "false");
     });
-    stage.dataset.processActive = String(index);
-    number.textContent = item.number;
-    signal.textContent = item.signal;
-    title.textContent = item.title;
-    text.textContent = item.text;
-    progress.style.width = `${(index + 1) / processSteps.length * 100}%`;
-
-    const reducedMotion = document.documentElement.classList.contains("low-performance") || (globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false);
-    if (!reducedMotion) {
-      stage.animate?.([
-        { transform: "scale(0.985)", filter: "saturate(0.7)" },
-        { transform: "scale(1)", filter: "saturate(1)" }
-      ], { duration: 420, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
-      title.animate?.([
-        { opacity: 0, transform: "translateY(18px)" },
-        { opacity: 1, transform: "translateY(0)" }
-      ], { duration: 360, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
-    }
     if (focus) selectedStep.focus();
+  }
+
+  function closeModal(event) {
+    event?.preventDefault?.();
+    if (!dialog.open || !openStep) return;
+    const stepToRestore = openStep;
+    modalLayout.update(() => {
+      dialog.close();
+      stepToRestore.classList.remove("is-open");
+      dialog.replaceChildren();
+      stepToRestore.focus();
+      openStep = null;
+    }, { duration: reducedMotion() ? 0 : Number(stepToRestore.dataset.duration) || 650, ease: "inOut(3)" });
+  }
+
+  function openModal(step) {
+    if (!step || dialog.open) return;
+    const index = Number(step.dataset.processIndex);
+    selectStep(index);
+    const clone = step.cloneNode(true);
+    clone.removeAttribute("data-process-step");
+    clone.removeAttribute("aria-haspopup");
+    clone.classList.add("process-step--dialog");
+    clone.querySelector("p")?.removeAttribute("hidden");
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "process-layout-dialog__close";
+    closeButton.dataset.processDialogClose = "";
+    closeButton.setAttribute("aria-label", "Cerrar detalle");
+    closeButton.textContent = "×";
+    dialog.replaceChildren(clone, closeButton);
+    openStep = step;
+    modalLayout.update(() => {
+      dialog.showModal();
+      step.classList.add("is-open");
+      closeButton.focus({ preventScroll: true });
+    }, { duration: reducedMotion() ? 0 : Number(step.dataset.duration) || 650, ease: "inOut(3)" });
   }
 
   const handleSelection = event => {
     const step = event.target?.closest?.("[data-process-step]");
     if (!step || !story.contains(step)) return;
-    selectStep(Number(step.dataset.processIndex));
+    openModal(step);
   };
-  const handleProcessChange = event => selectStep(Number(event.detail?.index));
   const handleKeyboard = event => {
     const step = event.target?.closest?.("[data-process-step]");
     if (!step || !story.contains(step) || !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
@@ -332,19 +350,22 @@ function setupProcessExplorer(container) {
     if (event.key === "End") nextIndex = steps.length - 1;
     selectStep(nextIndex, { focus: true });
   };
+  const handleDialogClick = event => {
+    if (event.target === dialog || event.target.closest?.("[data-process-dialog-close]")) closeModal(event);
+  };
 
   story.addEventListener("click", handleSelection);
-  story.addEventListener("focusin", handleSelection);
-  story.addEventListener("pointerover", handleSelection);
-  story.addEventListener("jobconnect:process-change", handleProcessChange);
   story.addEventListener("keydown", handleKeyboard);
+  dialog.addEventListener("cancel", closeModal);
+  dialog.addEventListener("click", handleDialogClick);
 
   return () => {
     story.removeEventListener("click", handleSelection);
-    story.removeEventListener("focusin", handleSelection);
-    story.removeEventListener("pointerover", handleSelection);
-    story.removeEventListener("jobconnect:process-change", handleProcessChange);
     story.removeEventListener("keydown", handleKeyboard);
+    dialog.removeEventListener("cancel", closeModal);
+    dialog.removeEventListener("click", handleDialogClick);
+    dialog.close?.();
+    dialog.remove();
   };
 }
 
@@ -381,7 +402,6 @@ export function buildHomeMarkup() {
     </section>
 
     <section class="home-story" aria-labelledby="story-title" data-reveal-section>
-      <div class="home-portal" data-portal aria-hidden="true"><span></span><span></span><span></span><i></i></div>
       <div class="home-section-label"><span>01</span><p>SOMOS JOBCONNECT</p></div>
       <div class="home-story__grid">
         <h2 id="story-title">Tecnología que acerca a las personas correctas.</h2>
@@ -405,7 +425,7 @@ export function buildHomeMarkup() {
       <div class="home-final__orbit" data-final-orbit aria-hidden="true"><span></span><span></span><i></i></div>
       <p>LISTOS PARA CONECTAR</p>
       <h2 id="home-final-title">El próximo gran talento ya está más cerca.</h2>
-      <button type="button" class="home-button home-button--light" data-cursor="Entrar" data-home-target="candidates">Comenzar ahora <span aria-hidden="true">↗</span></button>
+      <button type="button" class="home-button home-button--light" data-cursor="Entrar" data-home-target="vacancies">Comenzar ahora <span aria-hidden="true">↗</span></button>
     </section>
   </div>`;
 }

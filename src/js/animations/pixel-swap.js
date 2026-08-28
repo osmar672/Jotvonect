@@ -98,6 +98,7 @@ export function createPixelSwapLoader(root) {
     secondLayer?.removeAttribute('aria-hidden');
     secondLayer?.classList.add('is-visible');
     root.classList.add('is-complete');
+    root.setAttribute('aria-hidden', 'true');
   };
 
   const play = () => {
@@ -109,6 +110,8 @@ export function createPixelSwapLoader(root) {
     }
 
     cleanup();
+    root.removeAttribute('aria-hidden');
+    root.classList.remove('is-complete');
     firstLayer.classList.remove('is-hidden');
     secondLayer.classList.remove('is-visible');
     secondLayer.setAttribute('aria-hidden', 'true');

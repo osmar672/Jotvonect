@@ -45,11 +45,16 @@ test("Inicio presenta la empresa y el proceso de solución sin la sección de es
   assert.match(markup, /data-cursor-aura/);
   assert.match(markup, /home-jellyfish-video/);
   assert.match(markup, /autoplay[\s\S]*muted[\s\S]*loop[\s\S]*playsinline/);
-  assert.match(markup, /data-portal/);
+  assert.doesNotMatch(markup, /data-metaballs/);
+  assert.doesNotMatch(markup, /data-portal/);
   assert.match(markup, /data-final-orbit/);
   assert.match(markup, /Preparando movimiento/);
   assert.doesNotMatch(markup, /data-standards-explorer|data-standard-detail|data-standard-progress/);
   assert.match(markup, /data-process-story/);
+  assert.match(markup, /process-layout-grid/);
+  assert.doesNotMatch(markup, /data-process-stage/);
+  assert.equal((markup.match(/data-duration=/g) ?? []).length, 4);
+  assert.match(markup, /data-home-target="vacancies">Comenzar ahora/);
   assert.equal((markup.match(/data-process-step/g) ?? []).length, 4);
   assert.equal((markup.match(/data-standard-index=/g) ?? []).length, 0);
   assert.doesNotMatch(markup, /home-metrics|home-marquee|módulos conectados|operaciones HTTP|núcleo reutilizable/i);

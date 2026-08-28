@@ -129,7 +129,8 @@ check(
     && !homeSource.includes("home-marquee"),
   "Inicio presenta los estándares en un explorador interactivo y sin la franja de indicadores"
 );
-check(homeSource.includes("data-standard-progress") && homeSource.includes("data-process-story") && homeMotionSource.includes("jobconnect:process-change"), "Inicio integra progreso de estándares y narrativa controlada por scroll");
+check(homeSource.includes("createLayout") && homeSource.includes("process-layout-dialog") && homeSource.includes("data-process-story"), "Inicio integra las etapas mediante expansión modal compartida");
+check(!homeSource.includes("data-metaballs") && !homeMotionSource.includes("initMetaBalls"), "Inicio mantiene limpia la sección Somos JobConnect sin burbujas superpuestas");
 
 const shellSource = readFileSync(resolve(projectRoot, "src/js/ui/shell.js"), "utf8");
 const profilePanelSource = readFileSync(resolve(projectRoot, "src/js/ui/profile-panel.js"), "utf8");
@@ -149,7 +150,7 @@ check(appSource.includes("createInterfaceMotion") && appSource.includes("transit
 const packageJson = JSON.parse(readFileSync(resolve(projectRoot, "package.json"), "utf8"));
 check(
   ["gsap", "lenis", "animejs"].every(name => packageJson.dependencies?.[name])
-    && ["ScrollTrigger", "pointermove", "gsap.quickTo", "data-portal"].every(term => homeMotionSource.includes(term)),
+    && ["ScrollTrigger", "pointermove", "gsap.quickTo"].every(term => homeMotionSource.includes(term)),
   "Las bibliotecas y los efectos avanzados de scroll, puntero y movimiento continuo están conectados"
 );
 

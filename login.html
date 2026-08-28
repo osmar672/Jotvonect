@@ -55,6 +55,24 @@
         <p id="login-status" class="login-status" role="status" aria-live="polite"></p>
       </form>
 
+      <section class="face-access" aria-labelledby="face-access-title">
+        <button id="open-face-login" class="btn face-access__trigger" type="button">◎ Acceder con mi cara</button>
+        <div id="reflective-face-card" class="reflective-card-container" hidden>
+          <svg class="reflective-svg-filters" aria-hidden="true">
+            <defs><filter id="metallic-displacement" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="turbulence" baseFrequency=".03" numOctaves="2" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+          </svg>
+          <video id="face-video" autoplay playsinline muted class="reflective-video" aria-label="Vista previa de la cámara frontal"></video>
+          <div class="reflective-noise" aria-hidden="true"></div><div class="reflective-sheen" aria-hidden="true"></div><div class="reflective-border" aria-hidden="true"></div>
+          <div class="reflective-content">
+            <div class="reflective-card__header"><span class="security-badge"><span aria-hidden="true">▣</span> ACCESO SEGURO</span><span class="face-live" aria-hidden="true">● EN VIVO</span></div>
+            <div class="reflective-card__body"><span class="face-frame" aria-hidden="true"></span><h3 id="face-access-title">Verificación facial</h3><p>Mira de frente a la cámara. La imagen se procesa únicamente en este dispositivo.</p></div>
+            <div class="reflective-card__footer"><span><small>CUENTA SELECCIONADA</small><strong id="face-role-label">Empleado</strong></span><span class="face-fingerprint" aria-hidden="true">◎</span></div>
+          </div>
+          <div class="face-access__actions"><button id="verify-face-login" class="btn btn--primary" type="button">Verificar rostro</button><button id="cancel-face-login" class="btn" type="button">Cancelar</button></div>
+          <p id="face-login-status" class="face-access__status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
       <div class="auth-demo">
         <strong>Cuenta pública de DummyJSON</strong>
         <span>Usuario: <code>emilys</code></span>

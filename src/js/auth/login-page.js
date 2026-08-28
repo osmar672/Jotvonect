@@ -18,6 +18,14 @@ if (isAuthenticated()) {
   const submitButton = document.querySelector("#submit-login");
   const demoButton = document.querySelector("#fill-demo");
   const status = document.querySelector("#login-status");
+  const faceCard = document.querySelector("#reflective-face-card");
+  const faceVideo = document.querySelector("#face-video");
+  const faceStatus = document.querySelector("#face-login-status");
+  const faceRoleLabel = document.querySelector("#face-role-label");
+  const openFaceButton = document.querySelector("#open-face-login");
+  const verifyFaceButton = document.querySelector("#verify-face-login");
+  const cancelFaceButton = document.querySelector("#cancel-face-login");
+  let faceStream = null;
 
   const getSelectedRole = () => form.querySelector("[name='accountType']:checked")?.value || "job-seeker";
 
@@ -61,13 +69,72 @@ if (isAuthenticated()) {
     form.setAttribute("aria-busy", String(busy));
   }
 
+  function stopFaceCamera() {
+    faceStream?.getTracks?.().forEach(track => track.stop());
+    faceStream = null;
+    if (faceVideo) faceVideo.srcObject = null;
+  }
+
+  async function startFaceCamera() {
+    if (!faceCard || !faceVideo || !faceStatus) return;
+    faceCard.hidden = false;
+    faceStatus.className = "face-access__status";
+    faceStatus.textContent = "Solicitando acceso a la cámara…";
+    faceRoleLabel.textContent = form.querySelector("[name='accountType']:checked")?.parentElement?.innerText?.split("\n")?.[0] || getSelectedRole();
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error("Este navegador no permite usar la cámara.");
+      faceStream = await navigator.mediaDevices.getUserMedia({ video:{ width:{ ideal:640 }, height:{ ideal:480 }, facingMode:"user" }, audio:false });
+      faceVideo.srcObject = faceStream;
+      await faceVideo.play();
+      faceStatus.textContent = "Cámara activa. Centra tu rostro y pulsa Verificar rostro.";
+      verifyFaceButton?.focus();
+    } catch (error) {
+      stopFaceCamera();
+      faceStatus.textContent = error.name === "NotAllowedError" ? "Permiso de cámara rechazado. Habilítalo en la configuración del navegador." : error.message;
+      faceStatus.className = "face-access__status is-error";
+    }
+  }
+
+  async function hasVisibleFace() {
+    if (!faceVideo || faceVideo.readyState < 2) return false;
+    if (typeof globalThis.FaceDetector === "function") {
+      const detector = new globalThis.FaceDetector({ fastMode:true, maxDetectedFaces:1 });
+      return (await detector.detect(faceVideo)).length > 0;
+    }
+    return true;
+  }
+
+  async function verifyFaceAccess() {
+    if (!faceStream || !faceStatus || !verifyFaceButton) return;
+    verifyFaceButton.disabled = true;
+    faceStatus.textContent = "Comprobando presencia facial…";
+    try {
+      if (!(await hasVisibleFace())) throw new Error("No se detectó un rostro. Mejora la iluminación y vuelve a intentarlo.");
+      const credentials = DEMO_CREDENTIALS_BY_ROLE[getSelectedRole()] || DEMO_CREDENTIALS_BY_ROLE["job-seeker"];
+      faceStatus.textContent = "Rostro detectado. Abriendo JobConnect…";
+      faceStatus.className = "face-access__status is-success";
+      await login(credentials.username, credentials.password, globalThis.fetch, getSelectedRole());
+      stopFaceCamera();
+      window.location.replace("index.html");
+    } catch (error) {
+      faceStatus.textContent = error.message || "No se pudo completar el acceso facial.";
+      faceStatus.className = "face-access__status is-error";
+      verifyFaceButton.disabled = false;
+    }
+  }
+
   demoButton.addEventListener("click", () => {
     fillCredentialsForSelectedRole({ focusPassword: true });
   });
 
   for (const roleInput of form.querySelectorAll("[name='accountType']")) {
-    roleInput.addEventListener("click", () => fillCredentialsForSelectedRole());
+    roleInput.addEventListener("click", () => { fillCredentialsForSelectedRole(); if (faceRoleLabel) faceRoleLabel.textContent = roleInput.parentElement?.innerText?.split("\n")?.[0] || roleInput.value; });
   }
+
+  openFaceButton?.addEventListener("click", startFaceCamera);
+  verifyFaceButton?.addEventListener("click", verifyFaceAccess);
+  cancelFaceButton?.addEventListener("click", () => { stopFaceCamera(); faceCard.hidden = true; openFaceButton?.focus(); });
+  globalThis.addEventListener?.("pagehide", stopFaceCamera, { once:true });
 
   fillCredentialsForSelectedRole();
 
